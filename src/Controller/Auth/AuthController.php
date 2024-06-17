@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Controller\Auth;
+
+use App\DTO\Request\Auth\RegistrationDTO;
+use App\Service\Auth\RegistrationService;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+
+#[Route('/api/auth')]
+class AuthController extends AbstractController
+{
+    public function __construct(
+        private readonly JWTTokenManagerInterface $tokenManager,
+        private readonly RegistrationService  $registrationService,
+    ) {}
+
+    #[Route('/login', name: 'app_auth_login', methods: ['POST'])]
+    public function login(#[CurrentUser] $user): JsonResponse
+    {
+        return $this->json([
+            'data' => [
+                'token' => $this->tokenManager->create($user)
+            ]
+        ]);
+    }
+
+    #[Route('/register', name: 'app_auth_register', methods: ['POST'])]
+    public function register(#[MapRequestPayload] RegistrationDTO $registrationDTO): JsonResponse
+    {
+        $user = $this->registrationService->handle($registrationDTO);
+
+        return $this->json([
+            'data' => [
+                'token' => $this->tokenManager->create($user)
+            ]
+        ]);
+    }
+}
