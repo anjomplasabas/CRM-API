@@ -4,6 +4,7 @@ namespace App\Controller\Auth;
 
 use App\DTO\Request\Auth\RegistrationDTO;
 use App\Service\Auth\RegistrationService;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,7 +17,7 @@ class AuthController extends AbstractController
 {
     public function __construct(
         private readonly JWTTokenManagerInterface $tokenManager,
-        private readonly RegistrationService  $registrationService,
+        private readonly RegistrationService $registrationService,
     ) {}
 
     #[Route('/login', name: 'app_auth_login', methods: ['POST'])]
@@ -32,12 +33,20 @@ class AuthController extends AbstractController
     #[Route('/register', name: 'app_auth_register', methods: ['POST'])]
     public function register(#[MapRequestPayload] RegistrationDTO $registrationDTO): JsonResponse
     {
-        $user = $this->registrationService->handle($registrationDTO);
+        try {
+            $user = $this->registrationService->handle($registrationDTO);
 
-        return $this->json([
-            'data' => [
-                'token' => $this->tokenManager->create($user)
-            ]
-        ]);
+            return $this->json([
+                'data' => [
+                    'token' => $this->tokenManager->create($user)
+                ]
+            ]);
+        } catch (UniqueConstraintViolationException $exception) {
+            return $this->json([
+                'data' => [
+                    'message' => 'User email already exists.'
+                ]
+            ]);
+        }
     }
 }
