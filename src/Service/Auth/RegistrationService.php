@@ -44,6 +44,9 @@ readonly class RegistrationService
         );
         $this->profileRepository->save($profile);
 
-        return $user;
+        $user->setProfile($profile);
+        $this->userRepository->save($user);
+
+        return $this->userRepository->find($user->getId());
     }
 }
