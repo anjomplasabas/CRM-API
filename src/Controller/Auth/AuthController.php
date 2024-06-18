@@ -23,9 +23,13 @@ class AuthController extends AbstractController
     #[Route('/login', name: 'app_auth_login', methods: ['POST'])]
     public function login(#[CurrentUser] $user): JsonResponse
     {
+
         return $this->json([
             'data' => [
-                'token' => $this->tokenManager->create($user)
+                'token' => $this->tokenManager->createFromPayload($user, [
+                    'firstName' => $user->getProfile()->getFirstName(),
+                    'lastName' => $user->getProfile()->getLastName()
+                ])
             ]
         ]);
     }
@@ -38,7 +42,10 @@ class AuthController extends AbstractController
 
             return $this->json([
                 'data' => [
-                    'token' => $this->tokenManager->create($user)
+                    'token' => $this->tokenManager->createFromPayload($user, [
+                        'firstName' => $user->getProfile()->getFirstName(),
+                        'lastName' => $user->getProfile()->getLastName()
+                    ])
                 ]
             ]);
         } catch (UniqueConstraintViolationException $exception) {
