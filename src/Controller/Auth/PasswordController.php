@@ -2,7 +2,7 @@
 
 namespace App\Controller\Auth;
 
-use App\DTO\Request\Auth\UpdatePasswordDTO;
+use App\DTO\Request\Auth\ResetPasswordDTO;
 use App\Entity\User\PasswordResetToken;
 use App\Repository\User\PasswordResetTokenRepository;
 use App\Repository\User\UserRepository;
@@ -88,11 +88,11 @@ class PasswordController extends AbstractController
         ]);
     }
 
-    #[Route('/update-password', name: 'app_auth_update_password', methods: ['PUT'])]
-    public function update(#[MapRequestPayload] UpdatePasswordDTO $updatePasswordDTO): JsonResponse
+    #[Route('/reset-password', name: 'app_auth_reset_password', methods: ['PUT'])]
+    public function reset(#[MapRequestPayload] ResetPasswordDTO $resetPasswordDTO): JsonResponse
     {
         $passwordToken = $this->passwordResetTokenRepository->findOneBy([
-            'token' => $updatePasswordDTO->token
+            'token' => $resetPasswordDTO->token
         ]);
 
         if (!$passwordToken) {
@@ -104,7 +104,7 @@ class PasswordController extends AbstractController
         // Update new password
         $user = $passwordToken->getUser();
         $user->setPassword(
-            $this->passwordHasher->hashPassword($user, $updatePasswordDTO->password)
+            $this->passwordHasher->hashPassword($user, $resetPasswordDTO->password)
         );
         $this->userRepository->save($user);
         // Set password token to USED

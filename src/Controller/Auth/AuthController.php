@@ -23,7 +23,6 @@ class AuthController extends AbstractController
     #[Route('/login', name: 'app_auth_login', methods: ['POST'])]
     public function login(#[CurrentUser] $user): JsonResponse
     {
-
         return $this->json([
             'data' => [
                 'token' => $this->tokenManager->createFromPayload($user, [

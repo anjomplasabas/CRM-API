@@ -26,8 +26,8 @@ readonly class RegistrationDTO
         ]
         public string $type,
         #[
-            Assert\NotNull(message: 'User must have a valid Auth ID.'),
-            Assert\NotBlank(message: 'Auth ID must not be blanked.'),
+            Assert\NotNull(message: 'User must have a valid email.'),
+            Assert\NotBlank(message: 'Email must not be blanked.'),
             Assert\Type(
                 type: 'string'
             )
@@ -51,20 +51,14 @@ readonly class RegistrationDTO
         ]
         public string|null $password,
         #[
-            Assert\Length(
-                min: 4,
-                max: 25
-            ),
+            Assert\NotNull(message: 'User must have a valid first name.'),
             Assert\Type(
                 type: 'string'
             )
         ]
         public string|null $firstName,
         #[
-            Assert\Length(
-                min: 4,
-                max: 25
-            ),
+            Assert\NotNull(message: 'User must have a valid last name.'),
             Assert\Type(
                 type: 'string'
             )
@@ -91,7 +85,9 @@ readonly class RegistrationDTO
                     ),
                     new Assert\Length(
                         min: 10,
-                        max: 11
+                        max: 11,
+                        minMessage: 'Mobile number format is invalid.',
+                        maxMessage: 'Mobile number format is invalid.'
                     ),
                     new Assert\Type(
                         type: 'string'

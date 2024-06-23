@@ -4,7 +4,7 @@ namespace App\DTO\Request\Auth;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-readonly class UpdatePasswordDTO
+readonly class ResetPasswordDTO
 {
 
     public function __construct(
