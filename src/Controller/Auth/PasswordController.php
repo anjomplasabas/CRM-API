@@ -31,17 +31,13 @@ class PasswordController extends AbstractController
     public function forgot(Request $request): JsonResponse
     {
         $parameters = $request->toArray();
-
         if (!isset($parameters['authId']) || $parameters['authId'] === '') {
             throw new BadRequestHttpException('Invalid email or mobile number.');
         }
-
         $user = $this->userRepository->findOneBy(['authId' => $parameters['authId']]);
-
         if (!$user) {
             throw new NotFoundHttpException('User not found.');
         }
-
         if (!$user->getPasswordResetToken() || $user->getPasswordResetToken()->getStatus() != 'ACTIVE') {
             $passwordReset = new PasswordResetToken(
                 userId: $user->getId(),
@@ -64,23 +60,18 @@ class PasswordController extends AbstractController
     public function validate(Request $request): JsonResponse
     {
         $parameters = $request->toArray();
-
         if (!isset($parameters['token']) || $parameters['token'] === '') {
             throw new BadRequestHttpException('Invalid token.');
         }
-
         $passwordToken = $this->passwordResetTokenRepository->findOneBy([
             'token' => $parameters['token']
         ]);
-
         if (!$passwordToken) {
             throw new NotFoundHttpException('Password token not found.');
         }
-
         if ($passwordToken->getStatus() != 'ACTIVE') {
             throw new NotFoundHttpException('Invalid reset password link.');
         }
-
         $this->checkIfExpiredToken($passwordToken);
 
         return $this->json([
@@ -94,13 +85,10 @@ class PasswordController extends AbstractController
         $passwordToken = $this->passwordResetTokenRepository->findOneBy([
             'token' => $resetPasswordDTO->token
         ]);
-
         if (!$passwordToken) {
             throw new NotFoundHttpException('Password token link not found.');
         }
-
         $this->checkIfExpiredToken($passwordToken);
-
         // Update new password
         $user = $passwordToken->getUser();
         $user->setPassword(
@@ -110,7 +98,6 @@ class PasswordController extends AbstractController
         // Set password token to USED
         $passwordToken->setStatus('USED');
         $this->passwordResetTokenRepository->save($passwordToken);
-
 
         return $this->json([
             'message' => 'Password successfully updated.'
