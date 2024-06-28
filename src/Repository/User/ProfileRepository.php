@@ -18,8 +18,9 @@ class ProfileRepository extends ServiceEntityRepository
 
     public function save(Profile $profile): void
     {
-        $this->getEntityManager()->persist($profile);
-        $this->getEntityManager()->flush();
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($profile);
+        $entityManager->flush();
     }
 
     //    /**

@@ -18,8 +18,9 @@ class OrganizationRepository extends ServiceEntityRepository
 
     public function save(Organization $organization): void
     {
-        $this->getEntityManager()->persist($organization);
-        $this->getEntityManager()->flush();
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($organization);
+        $entityManager->flush();
     }
 
     //    /**
