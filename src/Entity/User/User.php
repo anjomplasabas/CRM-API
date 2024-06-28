@@ -3,7 +3,7 @@
 namespace App\Entity\User;
 
 use App\Repository\User\UserRepository;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -51,12 +51,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE, nullable: true, options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
-    private DateTime|null $createdAt = null;
+    private DateTimeImmutable|null $createdAt = null;
 
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE, nullable: true, options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
-    private DateTime|null $updatedAt = null;
+    private DateTimeImmutable|null $updatedAt = null;
 
     public function __construct(
         string|null $type = null,
@@ -76,8 +76,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->status = $status;
         $this->profile = $profile;
         $this->passwordResetToken = $passwordResetToken;
-        $this->createdAt = new DateTime('now');
-        $this->updatedAt = new DateTime('now');
+        $this->createdAt = new DateTimeImmutable('now');
+        $this->updatedAt = new DateTimeImmutable('now');
     }
 
     public function toArray(): array
@@ -196,24 +196,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTime
+    public function getCreatedAt(): DateTimeImmutable|null
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?\DateTime $createdAt): static
+    public function setCreatedAt(DateTimeImmutable|null $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTime
+    public function getUpdatedAt(): DateTimeImmutable|null
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTime $updatedAt): static
+    public function setUpdatedAt(DateTimeImmutable|null $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 
