@@ -4,7 +4,6 @@ namespace App\Service\User;
 
 use App\Entity\User\Profile;
 use App\Entity\User\User;
-use App\Enum\UserType;
 use App\Repository\User\ProfileRepository;
 
 class ProfileService

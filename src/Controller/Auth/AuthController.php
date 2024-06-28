@@ -4,8 +4,6 @@ namespace App\Controller\Auth;
 
 use App\DTO\Request\Auth\RegistrationDTO;
 use App\Service\Auth\RegistrationService;
-use App\Service\User\ProfileService;
-use App\Service\User\UserService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,7 +11,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/auth')]
 class AuthController extends AbstractController
