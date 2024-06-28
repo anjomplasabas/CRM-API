@@ -18,8 +18,9 @@ class PasswordResetTokenRepository extends ServiceEntityRepository
 
     public function save(PasswordResetToken $passwordResetToken): void
     {
-        $this->getEntityManager()->persist($passwordResetToken);
-        $this->getEntityManager()->flush();
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($passwordResetToken);
+        $entityManager->flush();
     }
 
     //    /**

@@ -107,21 +107,6 @@ readonly class RegistrationDTO
 
     public function shouldValidatePassword(): bool
     {
-        return UserType::canAuthenticateByPassword($this->type);
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'roles' => $this->roles,
-            'type' => $this->type,
-            'authId' => $this->authId,
-            'password' => $this->password,
-            'firstName' => $this->firstName,
-            'lastName' => $this->lastName,
-            'email' => $this->email,
-            'mobileNumber' => $this->mobileNumber,
-            'isForgot' => $this->isForgot,
-        ];
+        return $this->type == UserType::EMAIL->name;
     }
 }
