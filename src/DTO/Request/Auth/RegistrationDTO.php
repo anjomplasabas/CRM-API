@@ -77,25 +77,26 @@ readonly class RegistrationDTO
         ]
         public string|null $email,
         #[
-            Assert\When(
-                expression: 'this.shouldValidateMobileNumber()',
-                constraints: [
-                    new Assert\NotBlank(
-                        message: 'Mobile number must not be blanked.'
-                    ),
-                    new Assert\Length(
-                        min: 10,
-                        max: 11,
-                        minMessage: 'Mobile number format is invalid.',
-                        maxMessage: 'Mobile number format is invalid.'
-                    ),
-                    new Assert\Type(
-                        type: 'string'
-                    )
-                ]
+            Assert\NotBlank(
+                message: 'Mobile number must not be blanked.'
+            ),
+            Assert\Length(
+                min: 10,
+                max: 11,
+                minMessage: 'Mobile number format is invalid.',
+                maxMessage: 'Mobile number format is invalid.'
+            ),
+            Assert\Type(
+                type: 'string'
             )
         ]
-        public string|null $mobileNumber
+        public string|null $mobileNumber,
+        #[
+            Assert\Type(
+                type: 'boolean'
+            )
+        ]
+        public bool|null $isForgot,
     ) {
     }
 
@@ -104,13 +105,23 @@ readonly class RegistrationDTO
         return $this->type == UserType::GOOGLE->name;
     }
 
-    public function shouldValidateMobileNumber(): bool
-    {
-        return $this->type == UserType::EMAIL->name;
-    }
-
     public function shouldValidatePassword(): bool
     {
         return UserType::canAuthenticateByPassword($this->type);
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'roles' => $this->roles,
+            'type' => $this->type,
+            'authId' => $this->authId,
+            'password' => $this->password,
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
+            'email' => $this->email,
+            'mobileNumber' => $this->mobileNumber,
+            'isForgot' => $this->isForgot,
+        ];
     }
 }
