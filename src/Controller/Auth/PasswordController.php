@@ -45,7 +45,7 @@ class PasswordController extends AbstractController
                 token: md5($parameters['authId'] . time()),
                 status: 'ACTIVE',
                 user: $user,
-                expiredAt: Carbon::now()->addMinute(5)->toDateTimeImmutable()
+                expiredAt: Carbon::now()->addMinute(5)->toDateTime()
             );
             $this->passwordResetTokenRepository->save($passwordReset);
             // TODO: Send email for password link via queue
