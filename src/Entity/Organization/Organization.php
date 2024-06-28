@@ -4,7 +4,7 @@ namespace App\Entity\Organization;
 
 use App\Entity\User\User;
 use App\Repository\Organization\OrganizationRepository;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -29,12 +29,12 @@ class Organization
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE, nullable: true, options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
-    private DateTime|null $createdAt = null;
+    private DateTimeImmutable|null $createdAt = null;
 
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE, nullable: true, options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
-    private DateTime|null $updatedAt = null;
+    private DateTimeImmutable|null $updatedAt = null;
 
     public function __construct(
         int|null $userId = null,
@@ -44,8 +44,8 @@ class Organization
         $this->userId = $userId;
         $this->name = $name;
         $this->status = $status;
-        $this->createdAt = new DateTime('now');
-        $this->updatedAt = new DateTime('now');
+        $this->createdAt = new DateTimeImmutable('now');
+        $this->updatedAt = new DateTimeImmutable('now');
     }
 
     public function toArray(): array
@@ -101,24 +101,24 @@ class Organization
         return $this;
     }
 
-    public function getCreatedAt(): DateTime|null
+    public function getCreatedAt(): DateTimeImmutable|null
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTime|null $createdAt): static
+    public function setCreatedAt(DateTimeImmutable|null $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): DateTime|null
+    public function getUpdatedAt(): DateTimeImmutable|null
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(DateTime|null $updatedAt): static
+    public function setUpdatedAt(DateTimeImmutable|null $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 
