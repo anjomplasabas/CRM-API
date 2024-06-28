@@ -3,7 +3,7 @@
 namespace App\Entity\User;
 
 use App\Repository\User\PasswordResetTokenRepository;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -39,17 +39,17 @@ class PasswordResetToken
     private User|null $user = null;
 
     #[ORM\Column(name: 'expired_at', type: Types::DATETIME_MUTABLE)]
-    private DateTime|null $expiredAt = null;
+    private DateTimeImmutable|null $expiredAt = null;
 
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE, nullable: true, options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
-    private DateTime|null $createdAt = null;
+    private DateTimeImmutable|null $createdAt = null;
 
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE, nullable: true, options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
-    private DateTime|null $updatedAt = null;
+    private DateTimeImmutable|null $updatedAt = null;
 
     public function __construct(
         int|null $userId = null,
@@ -57,7 +57,7 @@ class PasswordResetToken
         string|null $token = null,
         string|null $status = null,
         User|null $user = null,
-        DateTime|null $expiredAt = null
+        DateTimeImmutable|null $expiredAt = null
     ) {
         $this->userId = $userId;
         $this->email = $email;
@@ -65,8 +65,8 @@ class PasswordResetToken
         $this->status = $status;
         $this->user = $user;
         $this->expiredAt = $expiredAt;
-        $this->createdAt = new DateTime('now');
-        $this->updatedAt = new DateTime('now');
+        $this->createdAt = new DateTimeImmutable('now');
+        $this->updatedAt = new DateTimeImmutable('now');
     }
 
     public function toArray(): array
@@ -147,35 +147,35 @@ class PasswordResetToken
         return $this;
     }
 
-    public function getExpiredAt(): ?DateTime
+    public function getExpiredAt(): DateTimeImmutable|null
     {
         return $this->expiredAt;
     }
 
-    public function setExpiredAt(?DateTime $expiredAt): void
+    public function setExpiredAt(DateTimeImmutable|null $expiredAt): void
     {
         $this->expiredAt = $expiredAt;
     }
 
 
-    public function getCreatedAt(): ?DateTime
+    public function getCreatedAt(): DateTimeImmutable|null
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?DateTime $createdAt): static
+    public function setCreatedAt(DateTimeImmutable|null $createdAt): static
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?DateTime
+    public function getUpdatedAt(): DateTimeImmutable|null
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?DateTime $updatedAt): static
+    public function setUpdatedAt(DateTimeImmutable|null $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 
