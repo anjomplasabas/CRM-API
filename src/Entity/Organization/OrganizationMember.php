@@ -29,16 +29,6 @@ class OrganizationMember
     #[ORM\Column(nullable: true)]
     private array|null $metadata = null;
 
-    #[ORM\OneToOne(
-        targetEntity: User::class,
-        inversedBy: 'organizationMember',
-    )]
-    #[ORM\JoinColumn(
-        name: 'user_id',
-        referencedColumnName: 'id'
-    )]
-    private User|null $user = null;
-
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE, nullable: true, options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]

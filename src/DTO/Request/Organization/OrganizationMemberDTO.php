@@ -10,14 +10,24 @@ class OrganizationMemberDTO
 
     public function __construct(
         #[
-            Assert\NotNull(message: 'User must have a valid first name.'),
+            Assert\NotNull(
+                message: 'User must have a valid first name.'
+            ),
+            Assert\NotBlank(
+                message: 'First name must not be blanked.'
+            ),
             Assert\Type(
                 type: 'string'
             )
         ]
         public string|null $firstName,
         #[
-            Assert\NotNull(message: 'User must have a valid last name.'),
+            Assert\NotNull(
+                message: 'User must have a valid last name.'
+            ),
+            Assert\NotBlank(
+                message: 'Last name must not be blanked.'
+            ),
             Assert\Type(
                 type: 'string'
             )

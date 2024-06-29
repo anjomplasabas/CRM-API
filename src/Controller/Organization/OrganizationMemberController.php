@@ -2,14 +2,23 @@
 
 namespace App\Controller\Organization;
 
+use App\DTO\Request\Organization\OrganizationMemberDTO;
+use App\Service\Organization\OrganizationMemberService;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('api/members')]
 class OrganizationMemberController extends AbstractController
 {
-    #[Route('/', name: 'app_organization_organization_member')]
+
+    public function __construct(
+        private readonly OrganizationMemberService $organizationMemberService
+    ) {}
+
+    #[Route('/', name: 'app_organization_members', methods: ['GET'])]
     public function index(): JsonResponse
     {
         return $this->json([
@@ -18,8 +27,19 @@ class OrganizationMemberController extends AbstractController
         ]);
     }
 
-    public function store(): JsonResponse
+    #[Route('/store', name: 'app_organization_members_store', methods: ['POST'])]
+    public function store(#[MapRequestPayload] OrganizationMemberDTO $organizationMemberDTO): JsonResponse
     {
-        return $this->json([]);
+        try {
+            $organizationMember = $this->organizationMemberService->handle($organizationMemberDTO);
+
+            return $this->json([
+                'data' => $organizationMember
+            ]);
+        } catch (UniqueConstraintViolationException $exception) {
+            return $this->json([
+                'message' => 'User email already exists.'
+            ]);
+        }
     }
 }

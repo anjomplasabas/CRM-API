@@ -49,9 +49,7 @@ class AuthController extends AbstractController
             ]);
         } catch (UniqueConstraintViolationException $exception) {
             return $this->json([
-                'data' => [
-                    'message' => 'User email already exists.'
-                ]
+                'message' => 'User email already exists.'
             ]);
         }
     }
