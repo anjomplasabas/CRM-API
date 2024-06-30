@@ -23,6 +23,37 @@ class ProfileRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
+    public function findProfileByUser(int $userId): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p.id, p.userId, p.firstName, p.lastName, p.email, p.mobileNumber, p.metadata')
+            ->where('p.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+        
+    }
+
+    public function updateProfile(int $id, array $data): ?Profile
+    {
+        $profile = $this->find($id);
+
+        if (!$profile) {
+            return null;
+        }
+        foreach ($data as $field => $value) {
+            $setter = 'set' . ucfirst($field);
+            if (method_exists($profile, $setter)) {
+                $profile->$setter($value);
+            }
+        }
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($profile);
+        $entityManager->flush();
+
+        return $profile;
+    }    
+
     //    /**
     //     * @return Profile[] Returns an array of Profile objects
     //     */
