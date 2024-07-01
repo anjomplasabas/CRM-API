@@ -2,7 +2,6 @@
 
 namespace App\Entity\Organization;
 
-use App\Entity\User\User;
 use App\Repository\Organization\OrganizationRepository;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
