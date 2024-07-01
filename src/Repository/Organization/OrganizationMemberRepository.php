@@ -17,33 +17,6 @@ class OrganizationMemberRepository extends ServiceEntityRepository
         parent::__construct($registry, OrganizationMember::class);
     }
 
-    public function findById(int $memberId): ?array
-    {
-        $member = $this->createQueryBuilder('o')
-            ->leftJoin('o.user', 'u')
-            ->leftJoin('u.profile', 'p')
-            ->select('o, u, p')
-            ->where('o.id = :memberId')
-            ->setParameter('memberId', $memberId)
-            ->getQuery()
-            ->getOneOrNullResult();
-
-        return [
-            'id' => $member->getId(),
-            'userId' => $member->getUserId(),
-            'roles' => $member->getUser()->getRoles(),
-            'authId' => $member->getUser()->getAuthId(),
-            'firstName' => $member->getUser()->getProfile()->getFirstName(),
-            'lastName' => $member->getUser()->getProfile()->getLastName(),
-            'email' => $member->getUser()->getProfile()->getEmail(),
-            'mobileNumber' => $member->getUser()->getProfile()->getMobileNumber(),
-            'memberStatus' => $member->getStatus(),
-            'userStatus' => $member->getUser()->getStatus(),
-            'createdAt' => $member->getCreatedAt(),
-            'updatedAt' => $member->getUpdatedAt(),
-        ];
-    }
-
     public function findByOrganizationId(int $organizationId, int|null $page = 1, int|null $pageSize = 10, string|null $searchQuery = ''): mixed
     {
         $query = $this->createQueryBuilder('o')

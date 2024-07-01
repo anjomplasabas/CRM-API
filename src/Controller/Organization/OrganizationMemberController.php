@@ -68,8 +68,22 @@ class OrganizationMemberController extends AbstractController
     public function show(int $memberId): JsonResponse
     {
         try {
+            $member = $this->organizationMemberRepository->find($memberId);
             return $this->json([
-                'data' => $this->organizationMemberRepository->findById($memberId)
+                'data' => [
+                    'id' => $member->getId(),
+                    'userId' => $member->getUserId(),
+                    'roles' => $member->getUser()->getRoles(),
+                    'authId' => $member->getUser()->getAuthId(),
+                    'firstName' => $member->getUser()->getProfile()->getFirstName(),
+                    'lastName' => $member->getUser()->getProfile()->getLastName(),
+                    'email' => $member->getUser()->getProfile()->getEmail(),
+                    'mobileNumber' => $member->getUser()->getProfile()->getMobileNumber(),
+                    'memberStatus' => $member->getStatus(),
+                    'userStatus' => $member->getUser()->getStatus(),
+                    'createdAt' => $member->getCreatedAt(),
+                    'updatedAt' => $member->getUpdatedAt(),
+                ]
             ]);
         }  catch (\Exception) {
             return $this->json([
