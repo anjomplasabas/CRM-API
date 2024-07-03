@@ -5,7 +5,7 @@ namespace App\DTO\Request\Organization;
 use App\Enum\UserType;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class OrganizationMemberDTO
+readonly class OrganizationMemberDTO
 {
 
     public function __construct(

@@ -95,17 +95,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         ];
     }
 
-    public function getId(): ?int
+    public function getId(): int|null
     {
         return $this->id;
     }
 
-    public function getType(): ?string
+    public function getType(): string|null
     {
         return $this->type;
     }
 
-    public function setType(?string $type): static
+    public function setType(string|null $type): static
     {
         $this->type = $type;
 
@@ -136,60 +136,58 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string|null
     {
         return $this->password;
     }
 
-    public function setPassword(?string $password): static
+    public function setPassword(string|null $password): static
     {
         $this->password = $password;
 
         return $this;
     }
 
-    public function isForgot(): ?bool
+    public function getIsForgot(): bool|null
     {
         return $this->isForgot;
     }
 
-    public function setForgot(?bool $isForgot): static
+    public function setIsForgot(bool|null $isForgot): void
     {
         $this->isForgot = $isForgot;
-
-        return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string|null
     {
         return $this->status;
     }
 
-    public function setStatus(?string $status): static
+    public function setStatus(string|null $status): static
     {
         $this->status = $status;
 
         return $this;
     }
 
-    public function getProfile(): ?Profile
+    public function getProfile(): Profile|null
     {
         return $this->profile;
     }
 
-    public function setProfile(?Profile $profile): static
+    public function setProfile(Profile|null $profile): static
     {
         $this->profile = $profile;
 
         return $this;
     }
 
-    public function getPasswordResetToken(): ?PasswordResetToken
+    public function getPasswordResetToken(): PasswordResetToken|null
     {
         return $this->passwordResetToken;
     }
 
-    public function setPasswordResetToken(?PasswordResetToken $passwordResetToken): static
+    public function setPasswordResetToken(PasswordResetToken|null $passwordResetToken): static
     {
         $this->passwordResetToken = $passwordResetToken;
 

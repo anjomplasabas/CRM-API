@@ -59,19 +59,20 @@ class OrganizationMemberService
         );
         // Persist profile
         $this->profileRepository->save($profile);
-        // Attach profile to user
-        $user->setProfile($profile);
-        // Persist user
-        $this->userRepository->save($user);
         // Create organization member
         $organizationMember = new OrganizationMember(
             organizationId: $organization->getId(),
             userId: $user->getId(),
             status: 'PENDING',
             metadata: [],
+            user: $user
         );
         // Persist organization member
         $this->organizationMemberRepository->save($organizationMember);
+        // Attach profile to user
+        $user->setProfile($profile);
+        // Persist user
+        $this->userRepository->save($user);
         // Send email link
 
         return $this->organizationMemberRepository->find($organizationMember->getId());

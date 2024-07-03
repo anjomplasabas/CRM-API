@@ -3,6 +3,7 @@
 namespace App\Controller\Auth;
 
 use App\DTO\Request\Auth\RegistrationDTO;
+use App\Repository\Organization\OrganizationRepository;
 use App\Service\Auth\RegistrationService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -17,17 +18,23 @@ class AuthController extends AbstractController
 {
     public function __construct(
         private readonly JWTTokenManagerInterface $tokenManager,
+        private readonly OrganizationRepository $organizationRepository,
         private readonly RegistrationService $registrationService,
     ) {}
 
     #[Route('/login', name: 'app_auth_login', methods: ['POST'])]
     public function login(#[CurrentUser] $user): JsonResponse
     {
+        $organization = $this->organizationRepository->findOneBy([
+            'userId' => $user->getId(),
+        ]);
+
         return $this->json([
             'data' => [
                 'token' => $this->tokenManager->createFromPayload($user, [
                     'firstName' => $user->getProfile()->getFirstName(),
-                    'lastName' => $user->getProfile()->getLastName()
+                    'lastName' => $user->getProfile()->getLastName(),
+                    'organizationId' => $organization?->getId()
                 ])
             ]
         ]);
@@ -43,7 +50,8 @@ class AuthController extends AbstractController
                 'data' => [
                     'token' => $this->tokenManager->createFromPayload($user, [
                         'firstName' => $user->getProfile()->getFirstName(),
-                        'lastName' => $user->getProfile()->getLastName()
+                        'lastName' => $user->getProfile()->getLastName(),
+                        'organizationId' => null
                     ])
                 ]
             ]);
