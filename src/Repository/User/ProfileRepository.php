@@ -6,6 +6,7 @@ use App\Entity\User\Profile;
 use App\DTO\Request\User\ProfileDTO;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * @extends ServiceEntityRepository<Profile>
@@ -35,19 +36,19 @@ class ProfileRepository extends ServiceEntityRepository
         
     }
 
-    public function updateProfile(ProfileDTO $profileDTO): Profile|null
+    public function updateProfile($id, ProfileDTO $profileDTO): Profile|null
     {
         $profile = $this->find($id);
 
         if (!$profile) {
             return null;
         }
-        foreach ($data as $field => $value) {
-            $setter = 'set' . ucfirst($field);
-            if (method_exists($profile, $setter)) {
-                $profile->$setter($value);
-            }
+
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        foreach (get_object_vars($profileDTO) as $field => $value) {
+            $propertyAccessor->setValue($profile, $field, $value);
         }
+
         $entityManager = $this->getEntityManager();
         $entityManager->persist($profile);
         $entityManager->flush();
