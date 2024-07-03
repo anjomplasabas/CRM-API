@@ -7,6 +7,7 @@ use App\Repository\Organization\OrganizationMemberRepository;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: OrganizationMemberRepository::class)]
 #[ORM\Table(name: 'organization_members')]
@@ -29,6 +30,16 @@ class OrganizationMember
     #[ORM\Column(nullable: true)]
     private array|null $metadata = null;
 
+    #[ORM\OneToOne(
+        targetEntity: User::class,
+    )]
+    #[ORM\JoinColumn(
+        name: 'user_id',
+        referencedColumnName: 'id'
+    )]
+    #[Ignore]
+    private User|null $user = null;
+
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE, nullable: true, options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
@@ -44,11 +55,13 @@ class OrganizationMember
         int|null $userId,
         string|null $status,
         array|null $metadata,
+        User|null $user = null
     ) {
         $this->organizationId = $organizationId;
         $this->userId = $userId;
         $this->status = $status;
         $this->metadata = $metadata;
+        $this->user = $user;
         $this->createdAt = new DateTime('now');
         $this->updatedAt = new DateTime('now');
     }
@@ -115,6 +128,18 @@ class OrganizationMember
     public function setMetadata(array|null $metadata): static
     {
         $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function getUser(): User|null
+    {
+        return $this->user;
+    }
+
+    public function setUser(User|null $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
