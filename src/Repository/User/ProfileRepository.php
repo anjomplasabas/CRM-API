@@ -3,6 +3,7 @@
 namespace App\Repository\User;
 
 use App\Entity\User\Profile;
+use App\DTO\Request\User\ProfileDTO;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -34,7 +35,7 @@ class ProfileRepository extends ServiceEntityRepository
         
     }
 
-    public function updateProfile(int $id, array $data): ?Profile
+    public function updateProfile(ProfileDTO $profileDTO): Profile|null
     {
         $profile = $this->find($id);
 

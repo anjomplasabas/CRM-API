@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Controller\Profile;
+namespace App\Controller\User;
 
 use App\Entity\Profile\Organization;
+use App\DTO\Request\Organization\OrganizationMemberDTO;
 use App\Repository\User\ProfileRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,11 +29,11 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/update', name: 'app_profile_by_user', methods: ['PUT'])]
-    public function updateProfile(Request $request): JsonResponse
+    public function updateProfile(#[MapRequestPayload] OrganizationMemberDTO $organizationMemberDTO): JsonResponse
     {
-        $data = $request->toArray();
+        dd($organizationMemberDTO);
         $userId = $this->getUser()?->getId();
-        $profile = $this->profileRepository->updateProfile($userId, $data);
+        $profile = $this->profileRepository->updateProfile($userId, $profileDTO);
         $profile = $this->profileRepository->findProfileByUser($userId);
         return $this->json([
             'data' => $profile
