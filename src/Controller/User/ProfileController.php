@@ -29,7 +29,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/update', name: 'app_profile_by_user', methods: ['PUT'])]
+    #[Route('/update', name: 'app_update_profile_by_user', methods: ['PUT'])]
     public function updateProfile(#[MapRequestPayload] ProfileDTO $profileDTO): JsonResponse
     {
         $userId = $this->getUser()?->getId();
