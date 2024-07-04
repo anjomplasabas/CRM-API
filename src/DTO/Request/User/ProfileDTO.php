@@ -33,15 +33,6 @@ readonly class ProfileDTO
         public string|null $lastName,
         #[
             Assert\NotBlank(
-                message: 'Email must not be blanked.'
-            ),
-            Assert\Email(
-                message: 'Must be a valid email address.'
-            )
-        ]
-        public string|null $email,
-        #[
-            Assert\NotBlank(
                 message: 'Mobile number must not be blanked.'
             ),
             Assert\Length(
