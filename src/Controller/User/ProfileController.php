@@ -5,10 +5,9 @@ namespace App\Controller\User;
 use App\Entity\Profile\Profile;
 use App\DTO\Request\User\ProfileDTO;
 use App\Repository\User\ProfileRepository;
+use App\Repository\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -16,7 +15,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProfileController extends AbstractController
 {
     public function __construct(
-        private readonly ProfileRepository $profileRepository
+        private readonly ProfileRepository $profileRepository,
+        private readonly UserRepository $userRepository
     )
     {}
 
@@ -34,7 +34,10 @@ class ProfileController extends AbstractController
     {
         $userId = $this->getUser()?->getId();
         $profile = $this->profileRepository->updateProfile($userId, $profileDTO);
-        $profile = $this->profileRepository->findProfileByUser($userId);
+        if ($profileDTO->status) {
+            $this->userRepository->updateStatusById($userId, $profileDTO->status);
+        }
+
         return $this->json([
             'data' => $profile
         ]);

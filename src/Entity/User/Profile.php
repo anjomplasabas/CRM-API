@@ -4,6 +4,7 @@ namespace App\Entity\User;
 
 use App\Repository\User\ProfileRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: ProfileRepository::class)]
 #[ORM\Table(name: 'profiles')]
@@ -40,6 +41,7 @@ class Profile
         name: 'user_id',
         referencedColumnName: 'id'
     )]
+    #[Ignore]
     private User|null $user = null;
 
     public function __construct(
