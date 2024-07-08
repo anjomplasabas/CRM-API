@@ -22,13 +22,4 @@ class UserRepository extends ServiceEntityRepository
         $entityManager->persist($user);
         $entityManager->flush();
     }
-
-    public function updateStatusById(string $id, string $status): void
-    {
-        $user = $this->find($id);
-        $user->setStatus($status);
-        $entityManager = $this->getEntityManager();
-        $entityManager->persist($user);
-        $entityManager->flush();
-    }
 }

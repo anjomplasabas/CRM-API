@@ -32,10 +32,12 @@ class ProfileController extends AbstractController
     #[Route('/update', name: 'app_update_profile_by_user', methods: ['PUT'])]
     public function updateProfile(#[MapRequestPayload] ProfileDTO $profileDTO): JsonResponse
     {
-        $userId = $this->getUser()?->getId();
-        $profile = $this->profileRepository->updateProfile($userId, $profileDTO);
+        $user = $this->getUser();
+        $profile = $this->profileRepository->updateProfile($user->getId(), $profileDTO);
+        // Update user status
         if ($profileDTO->status) {
-            $this->userRepository->updateStatusById($userId, $profileDTO->status);
+            $user->setStatus($profileDTO->status);
+            $this->userRepository->save($user);
         }
 
         return $this->json([
