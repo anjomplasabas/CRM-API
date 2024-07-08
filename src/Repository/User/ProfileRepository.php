@@ -46,6 +46,9 @@ class ProfileRepository extends ServiceEntityRepository
 
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach (get_object_vars($profileDTO) as $field => $value) {
+            if (!$propertyAccessor->isReadable($profile, $field)) {
+                continue;
+            }
             $propertyAccessor->setValue($profile, $field, $value);
         }
 

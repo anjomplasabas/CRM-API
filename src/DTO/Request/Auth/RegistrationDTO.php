@@ -10,24 +10,36 @@ readonly class RegistrationDTO
 
     public function __construct(
         #[
-            Assert\NotNull(message: 'User must have role assigned.'),
-            Assert\NotBlank(message: 'User role must not be null'),
+            Assert\NotNull(
+                message: 'User must have role assigned.'
+            ),
+            Assert\NotBlank(
+                message: 'User role must not be null'
+            ),
             Assert\Type(
                 type: 'array'
             )
         ]
         public array $roles,
         #[
-            Assert\NotNull(message: 'User must have an assigned type.'),
-            Assert\NotBlank(message: 'User type must not be blanked.'),
+            Assert\NotNull(
+                message: 'User must have an assigned type.'
+            ),
+            Assert\NotBlank(
+                message: 'User type must not be blanked.'
+            ),
             Assert\Type(
                 type: 'string'
             )
         ]
         public string $type,
         #[
-            Assert\NotNull(message: 'User must have a valid email.'),
-            Assert\NotBlank(message: 'Email must not be blanked.'),
+            Assert\NotNull(
+                message: 'User must have a valid email.'
+            ),
+            Assert\NotBlank(
+                message: 'Email must not be blanked.'
+            ),
             Assert\Type(
                 type: 'string'
             )
@@ -51,43 +63,64 @@ readonly class RegistrationDTO
         ]
         public string|null $password,
         #[
-            Assert\NotNull(message: 'User must have a valid first name.'),
-            Assert\Type(
-                type: 'string'
+            Assert\When(
+                expression: 'this.shouldValidatePassword()',
+                constraints: [
+                    new Assert\NotNull(
+                        message: 'User must have a valid first name.'
+                    ),
+                    new Assert\Type(
+                        type: 'string'
+                    )
+                ]
             )
         ]
         public string|null $firstName,
         #[
-            Assert\NotNull(message: 'User must have a valid last name.'),
-            Assert\Type(
-                type: 'string'
+            Assert\When(
+                expression: 'this.shouldValidatePassword()',
+                constraints: [
+                    new Assert\NotNull(
+                        message: 'User must have a valid last name.'
+                    ),
+                    new Assert\Type(
+                        type: 'string'
+                    )
+                ]
             )
         ]
         public string|null $lastName,
         #[
             Assert\When(
-                expression: 'this.shouldValidateEmail()',
+                expression: 'this.shouldValidatePassword()',
                 constraints: [
                     new Assert\NotBlank(
                         message: 'Email must not be blanked.'
                     ),
-                    new Assert\Email(message: 'Must be a valid email address.')
+                    new Assert\Email(
+                        message: 'Must be a valid email address.'
+                    )
                 ]
             )
         ]
         public string|null $email,
         #[
-            Assert\NotBlank(
-                message: 'Mobile number must not be blanked.'
-            ),
-            Assert\Length(
-                min: 10,
-                max: 11,
-                minMessage: 'Mobile number format is invalid.',
-                maxMessage: 'Mobile number format is invalid.'
-            ),
-            Assert\Type(
-                type: 'string'
+            Assert\When(
+                expression: 'this.shouldValidatePassword()',
+                constraints: [
+                    new Assert\NotBlank(
+                        message: 'Mobile number must not be blanked.'
+                    ),
+                    new Assert\Length(
+                        min: 10,
+                        max: 11,
+                        minMessage: 'Mobile number format is invalid.',
+                        maxMessage: 'Mobile number format is invalid.'
+                    ),
+                    new Assert\Type(
+                        type: 'string'
+                    )
+                ]
             )
         ]
         public string|null $mobileNumber,
@@ -97,6 +130,12 @@ readonly class RegistrationDTO
             )
         ]
         public bool|null $isForgot,
+        #[
+            Assert\Type(
+                type: 'string'
+            )
+        ]
+        public string|null $status,
     ) {
     }
 
