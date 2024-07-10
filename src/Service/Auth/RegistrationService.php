@@ -26,7 +26,7 @@ readonly class RegistrationService
             roles: $registrationDTO->roles,
             authId: $registrationDTO->authId,
             isForgot: $registrationDTO->isForgot,
-            status: 'ACTIVE'
+            status: 'PENDING'
         );
         if ($registrationDTO->shouldValidatePassword()) {
             $password = $this->passwordHasher->hashPassword($user, $registrationDTO->password);

@@ -34,7 +34,8 @@ class AuthController extends AbstractController
                 'token' => $this->tokenManager->createFromPayload($user, [
                     'firstName' => $user->getProfile()->getFirstName(),
                     'lastName' => $user->getProfile()->getLastName(),
-                    'organizationId' => $organization?->getId()
+                    'organizationId' => $organization?->getId(),
+                    'status' => $user->getStatus()
                 ])
             ]
         ]);
@@ -51,7 +52,8 @@ class AuthController extends AbstractController
                     'token' => $this->tokenManager->createFromPayload($user, [
                         'firstName' => $user->getProfile()->getFirstName(),
                         'lastName' => $user->getProfile()->getLastName(),
-                        'organizationId' => null
+                        'organizationId' => null,
+                        'status' => $user->getStatus()
                     ])
                 ]
             ]);

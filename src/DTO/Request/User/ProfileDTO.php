@@ -45,7 +45,19 @@ readonly class ProfileDTO
                 type: 'string'
             )
         ]
-        public string|null $mobileNumber                
+        public string|null $mobileNumber,
+        #[
+            Assert\Email(
+                message: 'Must be a valid email address.'
+            )
+        ]
+        public string|null $email,
+        #[
+            Assert\Type(
+                type: 'string'
+            )
+        ]
+        public string|null $status,
     ) {  
     }
 
