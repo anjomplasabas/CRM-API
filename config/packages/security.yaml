@@ -35,6 +35,10 @@ security:
           pattern: ^/api/auth/reset-password
           security:
             false
+        store_customer:
+          pattern: ^/api/customer/store
+          security:
+            false            
         api:
             pattern: ^/api
             stateless: true
