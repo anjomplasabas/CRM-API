@@ -35,8 +35,8 @@ security:
           pattern: ^/api/auth/reset-password
           security:
             false
-        store_customer:
-          pattern: ^/api/customer/store
+        store_order:
+          pattern: ^/api/order/store
           security:
             false            
         api:

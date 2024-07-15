@@ -1,12 +1,13 @@
 <?php
 
-namespace App\DTO\Request\Customer;
+namespace App\DTO\Request\Order;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-readonly class CustomerDTO
+readonly class OrderDTO
 {
     public function __construct(
+        public int|null $userId,
         public int|null $pageId,
         public string|null $facebookProfileId,    
         #[
@@ -113,7 +114,20 @@ readonly class CustomerDTO
                 type: 'string'
             )
         ]
-        public string|null $zipCode,        
+        public string|null $zipCode,
+        #[
+            Assert\NotNull(
+                message: 'User must have a valid total amount.'
+            ),
+            Assert\NotBlank(
+                message: 'total amount must not be blanked.'
+            ),
+            Assert\Type(
+                type: 'float'
+            )
+        ]
+        public float|null $totalAmount,        
+        public array|null $metadata   
     ) {  
     }
 
