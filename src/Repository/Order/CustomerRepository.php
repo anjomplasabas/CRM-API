@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repository\Customer;
+namespace App\Repository\Order;
 
-use App\Entity\Customer\Customer;
-use App\DTO\Request\Customer\CustomerDTO;
+use App\Entity\Order\Customer;
+use App\DTO\Request\Order\CustomerDTO;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Pagination\Paginator;

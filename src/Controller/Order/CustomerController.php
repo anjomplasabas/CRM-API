@@ -1,11 +1,8 @@
 <?php
 
-namespace App\Controller\Customer;
+namespace App\Controller\Order;
 
-use App\Entity\Customer\Customer;
-use App\DTO\Request\Customer\CustomerDTO;
-use App\Repository\Customer\CustomerRepository;
-use App\Service\Customer\CustomerService;
+use App\Repository\Order\CustomerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,8 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class CustomerController extends AbstractController
 {
     public function __construct(
-        private readonly CustomerRepository $customerRepository,
-        private readonly CustomerService $customerService
+        private readonly CustomerRepository $customerRepository
     )
     {}
 
@@ -31,7 +27,7 @@ class CustomerController extends AbstractController
         #[MapQueryParameter] string|null $searchQuery = null
     ): JsonResponse
     {
-        // try {
+        try {
             $customersQuery = $this->customerRepository->findByPageId(
                 $pageId,
                 $page,
@@ -40,11 +36,11 @@ class CustomerController extends AbstractController
             );
 
             return $this->json($customersQuery);
-        // } catch (\Exception) {
-        //     return $this->json([
-        //         'message' => 'Oops. Something went wrong'
-        //     ]);
-        // }
+        } catch (\Exception) {
+            return $this->json([
+                'message' => 'Oops. Something went wrong'
+            ]);
+        }
     }
 
     #[Route('/{customerId}', name: 'app_show_customer_details', methods: ['GET'])]
@@ -61,15 +57,6 @@ class CustomerController extends AbstractController
                 'message' => 'Oops. Something went wrong'
             ]);            
         }
-    }
-
-    #[Route('/store', name: 'app_create_customer', methods: ['POST'])]
-    public function store(#[MapRequestPayload] CustomerDTO $customerDTO): JsonResponse
-    {   
-        $customer = $this->customerService->handle($customerDTO);
-        return $this->json([
-            'data' => $customer
-        ]);
     }
  
 }
