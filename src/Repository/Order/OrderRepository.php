@@ -68,23 +68,6 @@ class OrderRepository extends ServiceEntityRepository
         ];
     }
 
-    public function updateStatus($id, $request): Order|null
-    {
-        $order = $this->find($id);
-
-        if (!$order) {
-            return null;
-        }
-
-        $order->setStatus($request['status']);
-
-        $entityManager = $this->getEntityManager();
-        $entityManager->persist($order);
-        $entityManager->flush();
-
-        return $order;
-    }    
-
     //    /**
     //     * @return Organization[] Returns an array of Organization objects
     //     */

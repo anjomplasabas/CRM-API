@@ -3,7 +3,6 @@
 namespace App\Controller\Order;
 
 use App\DTO\Request\Order\OrderDTO;
-use App\DTO\Request\Order\OrderStatusDTO;
 use App\Repository\Order\OrderRepository;
 use App\Service\Order\OrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -77,7 +76,15 @@ class OrderController extends AbstractController
     public function updateStatus(int $orderId, Request $request): JsonResponse
     {
         $parameters = $request->toArray();
-        $order = $this->orderRepository->updateStatus($orderId, $parameters);
+        
+        $order = $this->orderRepository->find($orderId);
+        if (!$order) {
+            return $this->json([
+                'message' => 'Order does not exist.'
+            ], 404);
+        }
+        $order->setStatus($parameters['status']);
+        $this->orderRepository->save($order);
 
         return $this->json([
             'data' => $order
