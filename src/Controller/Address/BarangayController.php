@@ -18,11 +18,9 @@ class BarangayController extends AbstractController
     #[Route('/barangays/{cityId}', name: 'app_addresses_barangay')]
     public function index(
         #[MapQueryParameter] int|null $cityId
-    ): JsonResponse
-    {
-        $barangays = $this->barangayRepository->findBy(['cityId' => $cityId]);
+    ): JsonResponse {
         return $this->json([
-            'data' => $barangays
+            'data' => $this->barangayRepository->findBy(['cityId' => $cityId])
         ]);
     }
 }

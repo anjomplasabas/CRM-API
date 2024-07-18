@@ -19,9 +19,8 @@ class CityController extends AbstractController
     public function index(
         #[MapQueryParameter] int|null $provinceId
     ): JsonResponse {
-        $cities = $this->cityRepository->findBy(['provinceId' => $provinceId]);
         return $this->json([
-            'data' => $cities
+            'data' => $this->cityRepository->findBy(['provinceId' => $provinceId])
         ]);
     }
 }
