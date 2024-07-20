@@ -32,7 +32,7 @@ readonly class OrderService
             zipCode: $orderDTO->zipCode
         );
         $this->customerRepository->save($customer);
-
+        
         $order = new Order(
             userId: $orderDTO->userId,
             pageId: $orderDTO->pageId,
@@ -41,7 +41,8 @@ readonly class OrderService
             totalAmount: $orderDTO->totalAmount,
             grandTotalAmount: $orderDTO->totalAmount,
             status: 'PENDING',
-            metadata: $orderDTO->metadata
+            metadata: $orderDTO->metadata,
+            customer: $customer
         );
         $this->orderRepository->save($order);
         

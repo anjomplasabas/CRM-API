@@ -2,6 +2,7 @@
 
 namespace App\Entity\Order;
 
+use App\Entity\Order\Customer;
 use App\Repository\Order\OrderRepository;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
@@ -40,6 +41,16 @@ class Order
     #[ORM\Column(nullable: true)]
     private array|null $metadata = null;
 
+    #[ORM\OneToOne(
+        targetEntity: Customer::class,
+    )]
+    #[ORM\JoinColumn(
+        name: 'customer_id',
+        referencedColumnName: 'id'
+    )]
+    #[Ignore]
+    private Customer|null $customer = null;
+
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE, nullable: true, options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
@@ -58,7 +69,8 @@ class Order
         float|null $totalAmount,
         float|null $grandTotalAmount,
         string|null $status,
-        array|null $metadata
+        array|null $metadata,
+        Customer|null $customer = null
     ) {
         $this->userId = $userId;
         $this->pageId = $pageId;
@@ -68,6 +80,7 @@ class Order
         $this->grandTotalAmount = $grandTotalAmount;
         $this->status = $status;
         $this->metadata = $metadata;
+        $this->customer = $customer;
         $this->createdAt = new DateTime('now');
         $this->updatedAt = new DateTime('now');
     }
@@ -189,6 +202,19 @@ class Order
 
         return $this;
     }
+
+    public function getCustomer(): Customer|null
+    {
+        return $this->customer;
+    }
+
+    public function setCustomer(Customer|null $customer): static
+    {
+        $this->customer = $customer;
+
+        return $this;
+    }
+
 
     public function getCreatedAt(): DateTime|null
     {

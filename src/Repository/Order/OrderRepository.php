@@ -50,6 +50,7 @@ class OrderRepository extends ServiceEntityRepository
             'id' => $order->getId(),
             'pageId' => $order->getPageId(),
             'customerId' => $order->getCustomerId(),
+            'fullName' => $order->getCustomer()->getFullName(),
             'totalAmount' => $order->getTotalAmount(),
             'grandTotalAmount' => $order->getGrandTotalAmount(),
             'referenceNumber' => $order->getReferenceNumber(),
