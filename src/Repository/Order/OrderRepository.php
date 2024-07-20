@@ -27,7 +27,8 @@ class OrderRepository extends ServiceEntityRepository
     public function findByPageId(int $pageId, int|null $page = 1, int|null $pageSize = 10, string|null $searchQuery = ''): mixed
     {
         $query = $this->createQueryBuilder('o')
-            ->select('o')
+            ->leftJoin('o.customer', 'c')
+            ->select('o, c')
             ->where('o.pageId = :pageId')
             ->setParameter('pageId', $pageId)
             ->setFirstResult(($page - 1) * $pageSize)
@@ -37,6 +38,7 @@ class OrderRepository extends ServiceEntityRepository
             $query = $query->andWhere(
                 $query->expr()->orX(
                     $query->expr()->like('o.referenceNumber', ':searchQuery'),
+                    $query->expr()->like('c.fullName', ':searchQuery'),
                     $query->expr()->like('o.totalAmount', ':searchQuery'),
                     $query->expr()->like('o.grandTotalAmount', ':searchQuery'),
                     $query->expr()->like('o.status', ':searchQuery'),
