@@ -38,7 +38,19 @@ security:
         store_order:
           pattern: ^/api/order/store
           security:
-            false            
+            false
+        province_list:
+          pattern: ^/api/addresses/provinces
+          security:
+            false
+        city_list:
+          pattern: ^/api/addresses/cities/*
+          security:
+            false
+        barangay_list:
+          pattern: ^/api/addresses/barangays/*
+          security:
+            false
         api:
             pattern: ^/api
             stateless: true
