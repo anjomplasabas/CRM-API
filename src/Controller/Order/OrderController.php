@@ -30,7 +30,7 @@ class OrderController extends AbstractController
         #[MapQueryParameter] string|null $searchQuery = null
     ): JsonResponse
     {
-        // try {
+        try {
             $ordersQuery = $this->orderRepository->findByPageId(
                 $pageId,
                 $page,
@@ -39,11 +39,11 @@ class OrderController extends AbstractController
             );
 
             return $this->json($ordersQuery);
-        // } catch (\Exception) {
-        //     return $this->json([
-        //         'message' => 'Oops. Something went wrong'
-        //     ]);
-        // }
+        } catch (\Exception) {
+            return $this->json([
+                'message' => 'Oops. Something went wrong'
+            ]);
+        }
     }
 
     #[Route('/{orderId}', name: 'app_show_order_details', methods: ['GET'])]
@@ -51,21 +51,7 @@ class OrderController extends AbstractController
     {
         try {
             $order = $this->orderRepository->find($orderId);
-            return $this->json([
-                'data' => [
-                    'id' => $order->getId(),
-                    'pageId' => $order->getPageId(),
-                    'customerId' => $order->getCustomerId(),
-                    'fullName' => $order->getCustomer()->getFullName(),
-                    'totalAmount' => $order->getTotalAmount(),
-                    'grandTotalAmount' => $order->getGrandTotalAmount(),
-                    'referenceNumber' => $order->getReferenceNumber(),
-                    'status' => $order->getStatus(),
-                    'metadaata' => $order->getMetadata(),
-                    'createdAt' => $order->getCreatedAt(),
-                    'updatedAt' => $order->getUpdatedAt(),
-                ]
-            ]);
+
             return $this->json([
                 'data'=> $order
             ]);
