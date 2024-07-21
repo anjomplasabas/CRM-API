@@ -57,7 +57,7 @@ class OrderRepository extends ServiceEntityRepository
             'grandTotalAmount' => $order->getGrandTotalAmount(),
             'referenceNumber' => $order->getReferenceNumber(),
             'status' => $order->getStatus(),
-            'metadaata' => $order->getMetadata(),
+            'metadata' => $order->getMetadata(),
             'createdAt' => $order->getCreatedAt(),
             'updatedAt' => $order->getUpdatedAt(),
         ], iterator_to_array($paginator));
