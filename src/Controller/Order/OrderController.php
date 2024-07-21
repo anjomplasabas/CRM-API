@@ -51,21 +51,7 @@ class OrderController extends AbstractController
     {
         try {
             $order = $this->orderRepository->find($orderId);
-            return $this->json([
-                'data' => [
-                    'id' => $order->getId(),
-                    'pageId' => $order->getPageId(),
-                    'customerId' => $order->getCustomerId(),
-                    'fullName' => $order->getCustomer()->getFullName(),
-                    'totalAmount' => $order->getTotalAmount(),
-                    'grandTotalAmount' => $order->getGrandTotalAmount(),
-                    'referenceNumber' => $order->getReferenceNumber(),
-                    'status' => $order->getStatus(),
-                    'metadaata' => $order->getMetadata(),
-                    'createdAt' => $order->getCreatedAt(),
-                    'updatedAt' => $order->getUpdatedAt(),
-                ]
-            ]);
+
             return $this->json([
                 'data'=> $order
             ]);
