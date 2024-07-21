@@ -30,7 +30,7 @@ class OrderController extends AbstractController
         #[MapQueryParameter] string|null $searchQuery = null
     ): JsonResponse
     {
-        // try {
+        try {
             $ordersQuery = $this->orderRepository->findByPageId(
                 $pageId,
                 $page,
@@ -39,11 +39,11 @@ class OrderController extends AbstractController
             );
 
             return $this->json($ordersQuery);
-        // } catch (\Exception) {
-        //     return $this->json([
-        //         'message' => 'Oops. Something went wrong'
-        //     ]);
-        // }
+        } catch (\Exception) {
+            return $this->json([
+                'message' => 'Oops. Something went wrong'
+            ]);
+        }
     }
 
     #[Route('/{orderId}', name: 'app_show_order_details', methods: ['GET'])]
