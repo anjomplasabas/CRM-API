@@ -7,6 +7,7 @@ use App\Entity\Order\Order;
 use App\DTO\Request\Order\OrderDTO;
 use App\Repository\Order\OrderRepository;
 use App\Repository\Order\CustomerRepository;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 readonly class OrderService
 {
@@ -48,4 +49,44 @@ readonly class OrderService
         
         return $order;
     }
+
+
+    
+    public function exportReport(string $filePath, int $pageId, int $userId): array|null
+    {
+        $spreadsheet = IOFactory::load($filePath);
+        $worksheet = $spreadsheet->getActiveSheet();
+        $orders = $this->orderRepository->findBy(['pageId' => $pageId]);
+        $iterator = 0;
+
+        foreach ($worksheet->getRowIterator() as $rowIndex => $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+    
+            foreach ($cellIterator as $cell) {
+                $headers[] = $cell->getValue();
+            }
+        }
+
+        foreach ($orders as $order) {
+            foreach ($headers as $header) {
+                $methodName = 'get' . ucfirst($header);
+
+                if (method_exists($order, $methodName)) {
+                    $data[$iterator][] =  $order->$methodName();
+                } elseif($header == 'products') {
+                    $data[$iterator][] = $order->getMetadata()['product'];
+                } else {
+                    $data[$iterator][] = $order->getCustomer()->$methodName();
+                }
+            }
+            $iterator++;
+        }
+
+        return [
+            "headers" => $headers,
+            "data" => $data
+        ];
+    }
+
 }

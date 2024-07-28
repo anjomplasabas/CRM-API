@@ -12,6 +12,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 #[Route('api/order')]
 class OrderController extends AbstractController
@@ -89,5 +91,29 @@ class OrderController extends AbstractController
         return $this->json([
             'data' => $order
         ]);
-    }    
+    }
+    
+    #[Route('/import/{pageId}', name: 'app_import_orders', methods: ['POST'])]
+    public function import(Request $request, int $pageId) :JsonResponse
+    {
+        $file = $request->files->get('orders');
+        $data = $this->orderService->exportReport($file->getPathname(), $pageId, $this->getUser()?->getId());
+        
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $reportHeaders = array_values($data['headers']);
+        $sheet->fromArray($reportHeaders, NULL, 'A1');
+        $sheet->fromArray($data['data'], NULL, 'A2');
+
+        // Save the file
+        $fileName = 'exported-orders-' . uniqid() . '.xlsx';
+        $writer = new Xlsx($spreadsheet);
+        $filePath = $this->getParameter('kernel.project_dir') . '/var/exports/' . $fileName;
+        $writer->save($filePath);
+        
+        return $this->json([
+            'data' => $fileName
+        ]);
+    }
 }
