@@ -99,8 +99,9 @@ class OrderController extends AbstractController
     #[Route('/import-template/{pageId}', name: 'app_import_template_report', methods: ['POST'])]
     public function import(Request $request, int $pageId) :JsonResponse
     {
-        $file = $request->files->get('orders');
-        
+        $file = $request->files->get('template');
+        $name = $request->request->get('name');      
+          
         // Move template to upload directory
         $uploadDirectory = $this->baseDir . '/var/orders/report-templates/'.$pageId;
         $templateFileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '-' . uniqid() . '.' . $file->guessExtension();
@@ -109,7 +110,7 @@ class OrderController extends AbstractController
         // New File Path
         $filePath = $uploadDirectory . '/' . $templateFileName;
         // Create Template
-        $template = $this->orderService->createTemplate($filePath, $templateFileName, $pageId, $this->getUser()?->getId());
+        $template = $this->orderService->createTemplate($filePath, $templateFileName, $name, $pageId, $this->getUser()?->getId());
 
         return $this->json([
             'data' => $template

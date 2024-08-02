@@ -23,6 +23,9 @@ class ReportTemplate
     private int|null $pageId = null;
 
     #[ORM\Column(length: 255)]
+    private string|null $name = null;
+
+    #[ORM\Column(length: 255)]
     private string|null $fileName = null;
 
     #[ORM\Column]
@@ -44,12 +47,14 @@ class ReportTemplate
     public function __construct(
         int|null $userId,
         int|null $pageId,
+        string|null $name,
         string|null $fileName,
         array|null $headers,
         array|null $parameters
     ) {
         $this->userId = $userId;
         $this->pageId = $pageId;
+        $this->name = $name;
         $this->fileName = $fileName;
         $this->headers = $headers;
         $this->parameters = $parameters;
@@ -63,6 +68,7 @@ class ReportTemplate
             'id' => $this->getId(),
             'userId' => $this->getUserId(),
             'pageId' => $this->getPageId(),
+            'name' => $this->getName(),
             'fileName' => $this->getFileName(),
             'headers' => $this->getHeaders(),
             'parameters' => $this->getParameters(),
@@ -96,6 +102,18 @@ class ReportTemplate
     public function setPageId(int $pageId): static
     {
         $this->pageId = $pageId;
+
+        return $this;
+    }
+
+    public function getName(): string|null
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
 
         return $this;
     }

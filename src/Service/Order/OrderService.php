@@ -58,6 +58,7 @@ readonly class OrderService
     public function createTemplate(
         string $filePath,
         string $fileName, 
+        string $name,
         int $pageId, 
         int $userId
     ): mixed
@@ -83,6 +84,7 @@ readonly class OrderService
         $template = new ReportTemplate(
             pageId: $pageId,
             userId: $userId,
+            name: $name,
             fileName: $fileName,
             headers: $headers,
             parameters: $parameters

@@ -23,6 +23,7 @@ final class Version20240801143530 extends AbstractMigration
             id INT AUTO_INCREMENT NOT NULL, 
             user_id INT NOT NULL, 
             page_id INT NOT NULL,
+            name VARCHAR(255) NOT NULL,
             file_name VARCHAR(255) NOT NULL, 
             headers JSON NOT NULL,
             parameters JSON DEFAULT NULL, 
