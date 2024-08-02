@@ -4,16 +4,21 @@ namespace App\Service\Order;
 
 use App\Entity\Order\Customer;
 use App\Entity\Order\Order;
+use App\Entity\Order\ReportTemplate;
 use App\DTO\Request\Order\OrderDTO;
 use App\Repository\Order\OrderRepository;
 use App\Repository\Order\CustomerRepository;
+use App\Repository\Order\ReportTemplateRepository;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 readonly class OrderService
 {
     public function __construct(
         private readonly OrderRepository $orderRepository,
-        private readonly CustomerRepository $customerRepository
+        private readonly CustomerRepository $customerRepository,
+        private readonly ReportTemplateRepository $reportTemplateRepository
     ) {
     }
 
@@ -50,41 +55,90 @@ readonly class OrderService
         return $order;
     }
     
-    public function exportReport(string $filePath, int $pageId, int $userId): array|null
+    public function createTemplate(
+        string $filePath,
+        string $fileName, 
+        int $pageId, 
+        int $userId
+    ): mixed
     {
         $spreadsheet = IOFactory::load($filePath);
         $worksheet = $spreadsheet->getActiveSheet();
-        $orders = $this->orderRepository->findBy(['pageId' => $pageId]);
-        $iterator = 0;
 
         foreach ($worksheet->getRowIterator() as $rowIndex => $row) {
+            $cells = [];
             $cellIterator = $row->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(false);
-    
             foreach ($cellIterator as $cell) {
-                $headers[] = $cell->getValue();
+                $cells[] = $cell->getValue();
             }
+
+            if ($rowIndex == 2) {
+                $parameters = $cells;
+                break;
+            }
+            $headers = $cells;            
         }
 
-        foreach ($orders as $order) {
-            foreach ($headers as $header) {
-                $methodName = 'get' . ucfirst($header);
+        $template = new ReportTemplate(
+            pageId: $pageId,
+            userId: $userId,
+            fileName: $fileName,
+            headers: $headers,
+            parameters: $parameters
+        );
+        $this->reportTemplateRepository->save($template);
 
+        return $template->getId();
+    }
+
+    public function processReport(int $templateId, int $pageId, string $baseDir): array|null
+    {
+        $iterator = 0;
+        $orders = $this->orderRepository->findBy(['pageId' => $pageId]);
+        $template = $this->reportTemplateRepository->find($templateId);
+        $parameters = $template->getParameters();
+        $headers = $template->getHeaders();
+
+        foreach ($orders as $order) {
+            foreach ($parameters as $parameter) {
+                $methodName = 'get' . ucfirst($parameter);
+                
                 if (method_exists($order, $methodName)) {
                     $data[$iterator][] =  $order->$methodName();
-                } elseif($header == 'products') {
+                } elseif($parameter == 'products') {
                     $data[$iterator][] = $order->getMetadata()['product'];
-                } else {
+                } elseif(method_exists($order->getCustomer(), $methodName)) {
                     $data[$iterator][] = $order->getCustomer()->$methodName();
+                } else {
+                    $data[$iterator][] = $parameter;
                 }
             }
             $iterator++;
         }
 
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $reportHeaders = array_values($headers);
+        $sheet->fromArray($reportHeaders, NULL, 'A1');
+        $sheet->fromArray($data, NULL, 'A2');
+
+        // Save the file
+        $fileName = 'exported-orders-' . uniqid() . '.xlsx';
+        $directory = $baseDir . '/var/orders/exports/' . $pageId;
+
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+        
+        $writer = new Xlsx($spreadsheet);
+        $filePath = $baseDir . '/var/orders/exports/' . $pageId . '/' . $fileName;
+        $writer->save($filePath);
+
         return [
-            "headers" => $headers,
-            "data" => $data
+            'filePath' => $filePath,
+            'fileName' => $fileName
         ];
     }
-
 }

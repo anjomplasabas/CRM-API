@@ -8,21 +8,24 @@ use App\Service\Order\OrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 #[Route('api/order')]
 class OrderController extends AbstractController
 {
     public function __construct(
         private readonly OrderRepository $orderRepository,
-        private readonly OrderService $orderService
+        private readonly OrderService $orderService,
+        string $baseDir
     )
-    {}
+    {
+        $this->baseDir = $baseDir;
+    }
 
     #[Route('/', name: 'app_orders_by_pageid', methods: ['GET'])]
     public function index(
@@ -93,27 +96,38 @@ class OrderController extends AbstractController
         ]);
     }
     
-    #[Route('/import/{pageId}', name: 'app_import_orders', methods: ['POST'])]
-    public function import(Request $request, int $pageId) :JsonResponse
+    #[Route('/import-template/{pageId}', name: 'app_import_template_report', methods: ['POST'])]
+    public function import(Request $request, int $pageId) :BinaryFileResponse
     {
         $file = $request->files->get('orders');
-        $data = $this->orderService->exportReport($file->getPathname(), $pageId, $this->getUser()?->getId());
         
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+        // Move template to upload directory
+        $uploadDirectory = $this->baseDir . '/var/orders/report-templates/'.$pageId;
+        $templateFileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '-' . uniqid() . '.' . $file->guessExtension();
+        $file->move($uploadDirectory, $templateFileName);
 
-        $reportHeaders = array_values($data['headers']);
-        $sheet->fromArray($reportHeaders, NULL, 'A1');
-        $sheet->fromArray($data['data'], NULL, 'A2');
+        // New File Path
+        $filePath = $uploadDirectory . '/' . $templateFileName;
+        // Create Template
+        $templateId = $this->orderService->createTemplate($filePath, $templateFileName, $pageId, $this->getUser()?->getId());
+        // Export Report
+        $data = $this->orderService->processReport($templateId, $pageId, $this->baseDir);
 
-        // Save the file
-        $fileName = 'exported-orders-' . uniqid() . '.xlsx';
-        $writer = new Xlsx($spreadsheet);
-        $filePath = $this->getParameter('kernel.project_dir') . '/var/exports/' . $fileName;
-        $writer->save($filePath);
-        
-        return $this->json([
-            'data' => $fileName
-        ]);
+        $response = new BinaryFileResponse($data['filePath']);
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $data['fileName']);
+
+        return $response;
     }
+
+    #[Route('/export/{templateId}/{pageId}', name: 'app_export_report', methods: ['GET'])]
+    public function export(int $templateId, int $pageId) :BinaryFileResponse
+    {
+        // Export Report
+        $data = $this->orderService->processReport($templateId, $pageId, $this->baseDir);
+
+        $response = new BinaryFileResponse($data['filePath']);
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $data['fileName']);
+
+        return $response;
+    }    
 }
