@@ -89,10 +89,16 @@ readonly class OrderService
         );
         $this->reportTemplateRepository->save($template);
 
-        return $template->getId();
+        return $template;
     }
 
-    public function processReport(int $templateId, int $pageId, string $baseDir): array|null
+    public function processReport(
+        int $templateId, 
+        int $pageId, 
+        string $baseDir, 
+        string $dateFrom, 
+        string $dateTo
+    ): array|null
     {
         $iterator = 0;
         $orders = $this->orderRepository->findBy(['pageId' => $pageId]);

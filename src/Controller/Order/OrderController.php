@@ -97,7 +97,7 @@ class OrderController extends AbstractController
     }
     
     #[Route('/import-template/{pageId}', name: 'app_import_template_report', methods: ['POST'])]
-    public function import(Request $request, int $pageId) :BinaryFileResponse
+    public function import(Request $request, int $pageId) :JsonResponse
     {
         $file = $request->files->get('orders');
         
@@ -109,9 +109,23 @@ class OrderController extends AbstractController
         // New File Path
         $filePath = $uploadDirectory . '/' . $templateFileName;
         // Create Template
-        $templateId = $this->orderService->createTemplate($filePath, $templateFileName, $pageId, $this->getUser()?->getId());
+        $template = $this->orderService->createTemplate($filePath, $templateFileName, $pageId, $this->getUser()?->getId());
+
+        return $this->json([
+            'data' => $template
+        ]);;
+    }
+
+    #[Route('/export/{templateId}/{pageId}', name: 'app_export_report', methods: ['GET'])]
+    public function export(
+        int $templateId, 
+        int $pageId,
+        #[MapQueryParameter] string|null $dateFrom,
+        #[MapQueryParameter] string|null $dateTo,
+    ) :BinaryFileResponse
+    {
         // Export Report
-        $data = $this->orderService->processReport($templateId, $pageId, $this->baseDir);
+        $data = $this->orderService->processReport($templateId, $pageId, $this->baseDir, $dateFrom, $dateTo);
 
         $response = new BinaryFileResponse($data['filePath']);
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $data['fileName']);
@@ -119,15 +133,14 @@ class OrderController extends AbstractController
         return $response;
     }
 
-    #[Route('/export/{templateId}/{pageId}', name: 'app_export_report', methods: ['GET'])]
-    public function export(int $templateId, int $pageId) :BinaryFileResponse
+    #[Route('/templates/{pageId}', name: 'app_show_template_report', methods: ['GET'])]
+    public function showTemplates(        
+        #[MapQueryParameter] int|null $pageId,
+        #[MapQueryParameter] int|null $page = 1,
+        #[MapQueryParameter] int|null $pageSize = 10,
+        #[MapQueryParameter] string|null $searchQuery = null
+    ): JsonResponse
     {
-        // Export Report
-        $data = $this->orderService->processReport($templateId, $pageId, $this->baseDir);
 
-        $response = new BinaryFileResponse($data['filePath']);
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $data['fileName']);
-
-        return $response;
     }    
 }
