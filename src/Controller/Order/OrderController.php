@@ -4,6 +4,7 @@ namespace App\Controller\Order;
 
 use App\DTO\Request\Order\OrderDTO;
 use App\Repository\Order\OrderRepository;
+use App\Repository\Order\ReportTemplateRepository;
 use App\Service\Order\OrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,7 +22,8 @@ class OrderController extends AbstractController
     public function __construct(
         private readonly OrderRepository $orderRepository,
         private readonly OrderService $orderService,
-        string $baseDir
+        string $baseDir,
+        private readonly ReportTemplateRepository $reportTemplateRepository,
     )
     {
         $this->baseDir = $baseDir;
@@ -50,6 +52,30 @@ class OrderController extends AbstractController
             ]);
         }
     }
+
+    #[Route('/templates', name: 'app_show_template_report', methods: ['GET'])]
+    public function showTemplates(        
+        #[MapQueryParameter] int|null $pageId,
+        #[MapQueryParameter] int|null $page = 1,
+        #[MapQueryParameter] int|null $pageSize = 10,
+        #[MapQueryParameter] string|null $searchQuery = null
+    ): JsonResponse
+    {
+        try {
+            $reportTemplatesQuery = $this->reportTemplateRepository->findByPageId(
+                $pageId,
+                $page,
+                $pageSize,
+                $searchQuery
+            );
+
+            return $this->json($reportTemplatesQuery);
+        } catch (\Exception) {
+            return $this->json([
+                'message' => 'Oops. Something went wrong'
+            ]);
+        }
+    }  
 
     #[Route('/{orderId}', name: 'app_show_order_details', methods: ['GET'])]
     public function show(int $orderId): JsonResponse
@@ -132,16 +158,5 @@ class OrderController extends AbstractController
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $data['fileName']);
 
         return $response;
-    }
-
-    #[Route('/templates/{pageId}', name: 'app_show_template_report', methods: ['GET'])]
-    public function showTemplates(        
-        #[MapQueryParameter] int|null $pageId,
-        #[MapQueryParameter] int|null $page = 1,
-        #[MapQueryParameter] int|null $pageSize = 10,
-        #[MapQueryParameter] string|null $searchQuery = null
-    ): JsonResponse
-    {
-
-    }    
+    }  
 }
