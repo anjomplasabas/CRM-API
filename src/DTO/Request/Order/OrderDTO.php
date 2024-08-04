@@ -62,6 +62,12 @@ readonly class OrderDTO
         ]
         public string|null $region,
         #[
+            Assert\NotNull(
+                message: 'User must have a valid province.'
+            ),
+            Assert\NotBlank(
+                message: 'province must not be blanked.'
+            ),
             Assert\Type(
                 type: 'string'
             )
