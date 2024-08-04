@@ -15,7 +15,7 @@ services:
   nginx:
     image: nginx:alpine
     ports:
-      - "8005:80"
+      - "80:80"
     volumes:
       - ./:/var/www/html
       - ./docker/default.conf:/etc/nginx/conf.d/default.conf
