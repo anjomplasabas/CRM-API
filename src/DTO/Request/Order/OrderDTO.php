@@ -56,12 +56,6 @@ readonly class OrderDTO
         ]
         public string|null $addressLine,
         #[
-            Assert\NotNull(
-                message: 'User must have a valid region.'
-            ),
-            Assert\NotBlank(
-                message: 'region must not be blanked.'
-            ),
             Assert\Type(
                 type: 'string'
             )

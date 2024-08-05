@@ -45,7 +45,7 @@ final class Version20240708141122 extends AbstractMigration
             email VARCHAR(100) DEFAULT NULL, 
             mobile_number VARCHAR(11) DEFAULT NULL,
             address_line VARCHAR(255) NOT NULL,
-            region VARCHAR(255) NOT NULL,
+            region VARCHAR(255) DEFAULT NULL,
             province VARCHAR(255) NOT NULL,
             city VARCHAR(255) NOT NULL,
             barangay VARCHAR(255) NOT NULL,
