@@ -8,7 +8,6 @@ use App\Entity\Order\ReportTemplate;
 use App\DTO\Request\Order\OrderDTO;
 use App\Repository\Order\OrderRepository;
 use App\Repository\Order\CustomerRepository;
-use App\Repository\Order\ReportTemplateRepository;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -17,8 +16,7 @@ readonly class OrderService
 {
     public function __construct(
         private readonly OrderRepository $orderRepository,
-        private readonly CustomerRepository $customerRepository,
-        private readonly ReportTemplateRepository $reportTemplateRepository
+        private readonly CustomerRepository $customerRepository
     ) {
     }
 
