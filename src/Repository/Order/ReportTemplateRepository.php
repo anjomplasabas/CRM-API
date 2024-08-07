@@ -63,5 +63,5 @@ class ReportTemplateRepository extends ServiceEntityRepository
             'page' => $page,
             'pageSize' => $pageSize,
         ];
-    }    
+    }
 }

@@ -66,7 +66,7 @@ readonly class ReportService
     ): array|null
     {
         $iterator = 0;
-        $orders = $this->orderRepository->findBy(['pageId' => $pageId]);
+        $orders = $this->orderRepository->findByPageIdAndDateRange($pageId, $dateFrom, $dateTo);
         $template = $this->reportTemplateRepository->find($templateId);
         $parameters = $template->getParameters();
         $headers = $template->getHeaders();
@@ -93,7 +93,9 @@ readonly class ReportService
 
         $reportHeaders = array_values($headers);
         $sheet->fromArray($reportHeaders, NULL, 'A1');
-        $sheet->fromArray($data, NULL, 'A2');
+        if(!empty($data)) {
+            $sheet->fromArray($data, NULL, 'A2');
+        }
 
         // Save the file
         $fileName = 'exported-orders-' . uniqid() . '.xlsx';
