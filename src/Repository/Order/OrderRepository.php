@@ -71,6 +71,21 @@ class OrderRepository extends ServiceEntityRepository
         ];
     }
 
+    public function findByPageIdAndDateRange($pageId, string $startDate, string $endDate)
+    {
+        $startDateTime = \DateTime::createFromFormat('Y-m-d', $startDate)->setTime(0, 0, 0);
+        $endDateTime = \DateTime::createFromFormat('Y-m-d', $endDate)->setTime(23, 59, 59);
+
+        $orders = $this->createQueryBuilder('o')
+            ->where('o.pageId = :pageId')
+            ->andWhere('o.createdAt BETWEEN :startDate AND :endDate')
+            ->setParameter('pageId', $pageId)
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate);
+
+        return $orders->getQuery()->getResult();
+    }    
+
     //    /**
     //     * @return Organization[] Returns an array of Organization objects
     //     */
