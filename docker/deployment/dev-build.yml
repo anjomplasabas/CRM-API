@@ -1,0 +1,27 @@
+build_image_develop_ecs:
+  stage: build_develop
+  before_script:
+    # Create .env
+    # - cp .docker/php/.env-template Wano-API/.env
+    - ls -la Wano-API
+    - apk add --no-cache curl jq python3 py3-pip
+    - pip install awscli
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+    - aws --version
+    - docker info
+    - docker --version
+  script:
+    # Copy environment file
+    - cp $DEVELOP_ENV Wano-API/.env
+    # Display updated .env
+    - cat Wano-API/.env
+    # Build docker image
+    - docker build -f docker/Dockerfile -t $DOCKER_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA .
+    # Tagg docker image
+    # List docker images
+    - docker images
+    # Login and push image to gitlab registry
+    - docker push $DOCKER_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA
+    - docker image rm $DOCKER_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA
+  only:
+    - main
