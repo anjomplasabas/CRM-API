@@ -89,5 +89,6 @@ class OrderController extends AbstractController
         return $this->json([
             'data' => $order
         ]);
-    }    
+    }
+
 }
