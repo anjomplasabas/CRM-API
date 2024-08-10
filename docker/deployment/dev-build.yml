@@ -1,5 +1,5 @@
 build_image_develop_ecs:
-  stage: build_develop
+  stage: build_dev
   before_script:
     # Create .env
     # - cp .docker/php/.env-template Wano-API/.env

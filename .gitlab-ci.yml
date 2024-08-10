@@ -3,7 +3,6 @@ services:
   - name: docker:dind
 stages:
   - build_dev
-  - deploy_dev
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
