@@ -42,7 +42,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # Set permissions for Symfony directories
-RUN chown -R www-data:www-data /var/www/html/var/cache /var/www/html/var/log \
+RUN chown -R www-data:www-data var/cache /var/log \
     && chmod -R 755 var
 
 # Expose port 9000 and port 80 for PHP-FPM and Nginx respectively
