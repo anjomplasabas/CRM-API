@@ -40,11 +40,10 @@ WORKDIR /var/www/html
 
 # Copy Symfony application
 COPY . .
-RUN ls -la
 
 # Set permissions for Symfony directories
-RUN chown -R www-data:www-data var/cache /var/log \
-    && chmod -R 755 var
+# RUN chown -R www-data:www-data var/cache /var/log \
+#     && chmod -R 755 var
 
 # Expose port 9000 and port 80 for PHP-FPM and Nginx respectively
 EXPOSE 9000
