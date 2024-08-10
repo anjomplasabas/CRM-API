@@ -35,21 +35,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
-WORKDIR /var/www/html
-
-# Copy Symfony application
-COPY --chown=www-data:www-data . .
-
-# Set permissions for Symfony directories
-# RUN chown -R www-data:www-data var/cache /var/log \
-#     && chmod -R 755 var
-
-# Expose port 9000 and port 80 for PHP-FPM and Nginx respectively
-EXPOSE 9000
-EXPOSE 80
-EXPOSE 443
-
 # Copy custom nginx configuration
 COPY ./docker/config/nginx.conf /etc/nginx/nginx.conf
 # Configure php-fpm
@@ -58,11 +43,25 @@ COPY ./docker/config/php.ini /etc/php7/conf.d/custom.ini
 # Configure supervisord
 COPY ./docker/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Make sure files/folders needed by the processes are accessable when they run under the nobody user
+RUN chown -R www-data:www-data /var/www/html /run /var/lib/nginx /var/log/nginx
+
+# Switch to use a non-root user from here on
 USER www-data
+
+# Copy Symfony application
+COPY --chown=www-data:www-data . .
+
+# Set working directory
+WORKDIR /var/www/html
+
 # Run composer install
 RUN composer install
-# Switch back to root for running supervisord
-USER root
+
+# Expose port 9000 and port 80 for PHP-FPM and Nginx respectively
+EXPOSE 9000
+EXPOSE 80
+EXPOSE 443
 
 # Start PHP-FPM and Nginx
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
