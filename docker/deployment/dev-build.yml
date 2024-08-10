@@ -3,7 +3,7 @@ build_image_develop_ecs:
   before_script:
     # Create .env
     # - cp .docker/php/.env-template wano-api/.env
-    - pwd
+    - ls -la /builds/outcrate/wano-api
     - apk add --no-cache curl jq python3 py3-pip
     - pip install awscli
     - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
@@ -12,7 +12,7 @@ build_image_develop_ecs:
     - docker --version
   script:
     # Copy environment file
-    - cp $DEVELOP_ENV wano-api/.env
+    - cp $DEVELOP_ENV /builds/outcrate/wano-api/.env
     # Display updated .env
     - cat wano-api/.env
     # Build docker image
