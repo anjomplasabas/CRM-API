@@ -58,5 +58,8 @@ COPY ./docker/config/php.ini /etc/php7/conf.d/custom.ini
 # Configure supervisord
 COPY ./docker/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Run composer install
+RUN composer install
+
 # Start PHP-FPM and Nginx
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
