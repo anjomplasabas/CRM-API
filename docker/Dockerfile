@@ -58,6 +58,8 @@ WORKDIR /var/www/html
 # Run composer install
 RUN composer install
 
+RUN php bin/console lexik:jwt:generate-keypair --overwrite
+
 # Expose port 9000 and port 80 for PHP-FPM and Nginx respectively
 EXPOSE 9000
 EXPOSE 80
