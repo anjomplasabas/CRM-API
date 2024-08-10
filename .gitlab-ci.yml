@@ -15,3 +15,5 @@ variables:
   AWS_SECRET_ACCESS_KEY: $ECR_AWS_SECRET_ACCESS_KEY
   TASK_DEFINITION_NAME: wano-api
   SERVICE_NAME: wano-api
+include: 
+  - 'docker/deployment/dev-build.yml'
