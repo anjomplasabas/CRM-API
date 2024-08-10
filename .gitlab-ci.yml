@@ -3,6 +3,7 @@ services:
   - name: docker:dind
 stages:
   - build_dev
+  - deploy_dev
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
@@ -16,3 +17,4 @@ variables:
   SERVICE_NAME: wano-api
 include: 
   - 'docker/deployment/dev-build.yml'
+  - 'docker/deployment/dev-deploy.yml'
