@@ -1,5 +1,5 @@
 deploy_develop_ecs:
-  stage: deploy_develop
+  stage: deploy_dev
   before_script:
     - apk add --no-cache curl jq python3 py3-pip
     - pip install awscli
