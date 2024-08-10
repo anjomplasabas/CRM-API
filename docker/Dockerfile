@@ -40,6 +40,7 @@ WORKDIR /var/www/html
 
 # Copy Symfony application
 COPY . .
+RUN ls -la
 
 # Set permissions for Symfony directories
 RUN chown -R www-data:www-data var/cache /var/log \
