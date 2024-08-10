@@ -3,7 +3,7 @@ build_image_develop_ecs:
   before_script:
     # Create .env
     # - cp .docker/php/.env-template wano-api/.env
-    - ls -la wano-api
+    - pwd
     - apk add --no-cache curl jq python3 py3-pip
     - pip install awscli
     - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
