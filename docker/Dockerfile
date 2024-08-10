@@ -39,7 +39,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 # Copy Symfony application
-COPY . .
+COPY --chown=www-data:www-data . .
 
 # Set permissions for Symfony directories
 # RUN chown -R www-data:www-data var/cache /var/log \
@@ -58,8 +58,11 @@ COPY ./docker/config/php.ini /etc/php7/conf.d/custom.ini
 # Configure supervisord
 COPY ./docker/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+USER www-data
 # Run composer install
-RUN composer install --prefer-dist
+RUN composer install
+# Switch back to root for running supervisord
+USER root
 
 # Start PHP-FPM and Nginx
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
