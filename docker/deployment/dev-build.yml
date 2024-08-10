@@ -13,7 +13,7 @@ build_image_develop_ecs:
   script:
     # Copy environment file
     - cat $DEVELOP_ENV
-    - cp $DEVELOP_ENV /builds/outcrate/wano-api/.env
+    - cp $DEVELOP_ENV .env
     # Display updated .env
     - cat wano-api/.env
     # Build docker image
