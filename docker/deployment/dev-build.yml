@@ -13,8 +13,8 @@ build_image_develop_ecs:
     # - cp $DEVELOP_ENV .env
     # - ls -la
     # Use docker buildx create --use
-    - docker buildx create --use
-    - docker buildx inspect --bootstrap
+    - docker buildx create --name mybuilder --use
+    - docker buildx inspect mybuilder --bootstrap
     # Display updated .env
     - cat .env
     # Build docker image
