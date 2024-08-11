@@ -51,6 +51,10 @@ security:
           pattern: ^/api/addresses/barangays/*
           security:
             false
+        facebook_verify_callback:
+          pattern: ^/api/callback/facebook-verify/*
+          security:
+            false
         api:
             pattern: ^/api
             stateless: true
