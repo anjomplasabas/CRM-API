@@ -31,6 +31,8 @@ class WebhookController extends AbstractController
                 'message' => 'Invalid callback token.'
             ], 401);
         }
-        return $this->json($request->query->get('hub_challenge'));
+        return $this->json(
+            intval($request->query->get('hub_challenge'))
+        );
     }
 }
