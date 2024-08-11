@@ -4,7 +4,7 @@ build_image_develop_ecs:
     # Create .env
     # - cp .docker/php/.env-template wano-api/.env
     # - ls -la /builds/outcrate/wano-api
-    - apk add --no-cache curl jq python3 py3-pip docker-buildx
+    - apk add --no-cache curl jq python3 py3-pip
     - pip install awscli
     - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
     # Install Buildx
