@@ -4,20 +4,21 @@ build_image_develop_ecs:
     # Create .env
     # - cp .docker/php/.env-template wano-api/.env
     # - ls -la /builds/outcrate/wano-api
-    - apk add --no-cache curl jq python3 py3-pip
+    - apk add --no-cache curl jq python3 py3-pip docker-buildx
     - pip install awscli
     - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+    # Install Buildx
+    - curl -sSL https://github.com/docker/buildx/releases/download/v0.10.2/buildx-v0.10.2.linux-amd64 > /usr/local/bin/docker-buildx && chmod +x /usr/local/bin/docker-buildx
+    - docker buildx version || echo "Buildx installation failed."
+    # Create and use buildx builder
+    - docker buildx create --name mybuilder --use
+    - docker buildx inspect mybuilder --bootstrap
   script:
     # Copy environment file
     # - cat $DEVELOP_ENV
     # - cp $DEVELOP_ENV .env
     # - ls -la
     # Use docker buildx create --use
-    # Install Buildx
-    - docker buildx version || curl -sSL https://github.com/docker/buildx/releases/download/v0.10.2/buildx-v0.10.2.linux-amd64 > /usr/local/bin/docker-buildx && chmod +x /usr/local/bin/docker-buildx
-    # Set up Buildx
-    - docker buildx create --name mybuilder --use
-    - docker buildx inspect mybuilder --bootstrap
     # Display updated .env
     - cat .env
     # Build docker image
