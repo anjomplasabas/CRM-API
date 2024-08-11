@@ -17,7 +17,7 @@ class WebhookController extends AbstractController
         private readonly LoggerInterface $logger
     ) {}
 
-    #[Route('/facebook-verify', name: 'app_auth_webhook_facebook_verify')]
+    #[Route('/facebook-verify', name: 'app_auth_webhook_facebook_verify', methods: ['GET'])]
     public function index(Request $request): JsonResponse
     {
         $this->logger->info($request);
@@ -33,6 +33,15 @@ class WebhookController extends AbstractController
         }
         return $this->json(
             intval($request->query->get('hub_challenge'))
+        );
+    }
+
+    #[Route('/facebook-verify', name: 'app_auth_webhook_facebook_callback', methods: ['POST'])]
+    public function subscribe(Request $request)
+    {
+        $this->logger->info($request->toArray());
+        return $this->json(
+            $request->toArray()
         );
     }
 }
