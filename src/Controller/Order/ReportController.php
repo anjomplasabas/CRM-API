@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag; 
 
-#[Route('api/templates')]
+#[Route('api')]
 class ReportController extends AbstractController
 {
     public function __construct(
@@ -24,7 +24,7 @@ class ReportController extends AbstractController
         $this->baseDir = $baseDir;
     }
 
-    #[Route('/', name: 'app_show_template_report_list', methods: ['GET'])]
+    #[Route('/templates', name: 'app_show_template_report_list', methods: ['GET'])]
     public function index(        
         #[MapQueryParameter] int|null $pageId,
         #[MapQueryParameter] int|null $page = 1,
@@ -48,7 +48,7 @@ class ReportController extends AbstractController
         }
     }
     
-    #[Route('/{templateId}', name: 'app_show_template_details', methods: ['GET'])]
+    #[Route('/templates/{templateId}', name: 'app_show_template_details', methods: ['GET'])]
     public function show(int $templateId): JsonResponse
     {
         try {
@@ -64,7 +64,7 @@ class ReportController extends AbstractController
         }
     }
 
-    #[Route('/import/{pageId}', name: 'app_import_template_report', methods: ['POST'])]
+    #[Route('/templates/import/{pageId}', name: 'app_import_template_report', methods: ['POST'])]
     public function import(Request $request, int $pageId) :JsonResponse
     {
         $file = $request->files->get('template');
@@ -85,7 +85,7 @@ class ReportController extends AbstractController
         ]);;
     }
 
-    #[Route('/export/{templateId}/{pageId}', name: 'app_export_report', methods: ['GET'])]
+    #[Route('/templates/export/{templateId}/{pageId}', name: 'app_export_report', methods: ['GET'])]
     public function export(
         int $templateId, 
         int $pageId,

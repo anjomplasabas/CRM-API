@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('api/profile')]
+#[Route('api')]
 class ProfileController extends AbstractController
 {
     public function __construct(
@@ -20,7 +20,7 @@ class ProfileController extends AbstractController
     )
     {}
 
-    #[Route('/', name: 'app_profile_by_user', methods: ['GET'])]
+    #[Route('/profile', name: 'app_profile_by_user', methods: ['GET'])]
     public function showByUser(): JsonResponse
     {
         $profile = $this->profileRepository->findProfileByUser($this->getUser()?->getId());
@@ -29,7 +29,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/update', name: 'app_update_profile_by_user', methods: ['PUT'])]
+    #[Route('/profile/update', name: 'app_update_profile_by_user', methods: ['PUT'])]
     public function updateProfile(#[MapRequestPayload] ProfileDTO $profileDTO): JsonResponse
     {
         $user = $this->getUser();
