@@ -39,7 +39,7 @@ class WebhookController extends AbstractController
     #[Route('/facebook-verify', name: 'app_auth_webhook_facebook_callback', methods: ['POST'])]
     public function subscribe(Request $request)
     {
-        $this->logger->info($request->toArray());
+        $this->logger->info(json_encode($request->toArray()));
         return $this->json(
             $request->toArray()
         );
