@@ -20,7 +20,7 @@ class WebhookController extends AbstractController
                 'message' => 'Invalid callback request.'
             ], 400);
         }
-        if ($request->query->get('hub_token') != self::WEBHOOK_TOKEN) {
+        if ($request->query->get('hub_verify_token') != self::WEBHOOK_TOKEN) {
             return $this->json([
                 'message' => 'Invalid callback token.'
             ], 401);
