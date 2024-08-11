@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('api/order')]
+#[Route('api')]
 class OrderController extends AbstractController
 {
     public function __construct(
@@ -22,7 +22,7 @@ class OrderController extends AbstractController
     )
     {}
 
-    #[Route('/', name: 'app_orders_by_pageid', methods: ['GET'])]
+    #[Route('/order', name: 'app_orders_by_pageid', methods: ['GET'])]
     public function index(
         #[MapQueryParameter] int|null $pageId,
         #[MapQueryParameter] int|null $page = 1,
@@ -46,7 +46,7 @@ class OrderController extends AbstractController
         }
     }
 
-    #[Route('/{orderId}', name: 'app_show_order_details', methods: ['GET'])]
+    #[Route('/order/{orderId}', name: 'app_show_order_details', methods: ['GET'])]
     public function show(int $orderId): JsonResponse
     {
         try {
@@ -62,7 +62,7 @@ class OrderController extends AbstractController
         }
     }
 
-    #[Route('/store', name: 'app_create_order', methods: ['POST'])]
+    #[Route('/order/store', name: 'app_create_order', methods: ['POST'])]
     public function store(#[MapRequestPayload]  OrderDTO $orderDTO): JsonResponse
     {           
         $order = $this->orderService->handle($orderDTO);
@@ -72,7 +72,7 @@ class OrderController extends AbstractController
         ]);     
     }
 
-    #[Route('/update-status/{orderId}', name: 'app_update_order_status', methods: ['PUT'])]
+    #[Route('/order/update-status/{orderId}', name: 'app_update_order_status', methods: ['PUT'])]
     public function updateStatus(int $orderId, Request $request): JsonResponse
     {
         $parameters = $request->toArray();

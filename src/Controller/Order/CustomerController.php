@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('api/customer')]
+#[Route('api')]
 class CustomerController extends AbstractController
 {
     public function __construct(
@@ -19,7 +19,7 @@ class CustomerController extends AbstractController
     )
     {}
 
-    #[Route('/', name: 'app_customers_by_pageid', methods: ['GET'])]
+    #[Route('/customer', name: 'app_customers_by_pageid', methods: ['GET'])]
     public function index(
         #[MapQueryParameter] int|null $pageId,
         #[MapQueryParameter] int|null $page = 1,
@@ -43,7 +43,7 @@ class CustomerController extends AbstractController
         }
     }
 
-    #[Route('/{customerId}', name: 'app_show_customer_details', methods: ['GET'])]
+    #[Route('/customer/{customerId}', name: 'app_show_customer_details', methods: ['GET'])]
     public function show(int $customerId): JsonResponse
     {
         try {
