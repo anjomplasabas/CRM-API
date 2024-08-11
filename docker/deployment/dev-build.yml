@@ -12,8 +12,6 @@ build_image_develop_ecs:
     - cat $DEVELOP_ENV
     - cp $DEVELOP_ENV .env
     - ls -la
-    # Use docker buildx create --use
-    - docker buildx create --use
     # Display updated .env
     - cat .env
     # Build docker image
