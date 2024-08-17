@@ -3,10 +3,12 @@
 namespace App\Service\Auth;
 
 use App\DTO\Request\Auth\RegistrationDTO;
+use App\Event\User\PageEvent;
 use App\Entity\User\Profile;
 use App\Entity\User\User;
 use App\Repository\User\ProfileRepository;
 use App\Repository\User\UserRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 readonly class RegistrationService
@@ -16,6 +18,7 @@ readonly class RegistrationService
         private readonly ProfileRepository $profileRepository,
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly UserRepository $userRepository,
+        private EventDispatcherInterface $eventDispatcher
     ) {
     }
 
@@ -45,6 +48,9 @@ readonly class RegistrationService
 
         $user->setProfile($profile);
         $this->userRepository->save($user);
+
+        $event = new PageEvent($registrationDTO->pages, $user->getId());
+        $this->eventDispatcher->dispatch($event, PageEvent::NAME);
 
         return $this->userRepository->find($user->getId());
     }

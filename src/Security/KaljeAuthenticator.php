@@ -3,10 +3,12 @@
 namespace App\Security;
 
 use App\Enum\UserType;
+use App\Event\User\PageEvent;
 use App\Repository\User\UserRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -20,7 +22,8 @@ class KaljeAuthenticator extends AbstractAuthenticator
 
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
+        private EventDispatcherInterface $eventDispatcher
     ) {}
 
     public function supports(Request $request): ?bool
@@ -54,6 +57,16 @@ class KaljeAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $data = $request->toArray();
+        
+        $user = $this->userRepository->findOneBy([
+            'type' => $data['type'],
+            'authId' => $data['authId']
+        ]);
+
+        $event = new PageEvent($data['pages'], $user->getId());
+        $this->eventDispatcher->dispatch($event, PageEvent::NAME);
+
         return null;
     }
 
