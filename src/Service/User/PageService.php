@@ -8,10 +8,10 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class PageService
 {
-    private $pageRepository;
-    private $entityManager;
-
-    public function __construct(PageRepository $pageRepository, EntityManagerInterface $entityManager)
+   public function __construct(
+        private PageRepository $pageRepository, 
+        private EntityManagerInterface $entityManager
+    )
     {
         $this->pageRepository = $pageRepository;
         $this->entityManager = $entityManager;

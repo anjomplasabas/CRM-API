@@ -7,10 +7,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class PageEvent extends Event
 {
     public const NAME = 'pages.event';
-
-    private $pagesData;
-    private $userId;
-
+    
     public function __construct(array $pagesData, int $userId)
     {
         $this->pagesData = $pagesData;

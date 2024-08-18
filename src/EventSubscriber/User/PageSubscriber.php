@@ -8,10 +8,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PageSubscriber implements EventSubscriberInterface
 {
-    private $pageService;
-
-    public function __construct(PageService $pageService)
-    {
+    public function __construct(
+        private PageService $pageService
+    ) {
         $this->pageService = $pageService;
     }
 

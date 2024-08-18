@@ -3,6 +3,7 @@
 namespace App\Entity\Order;
 
 use App\Entity\Order\Customer;
+use App\Entity\User\Page;
 use App\Repository\Order\OrderRepository;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
@@ -20,7 +21,7 @@ class Order
     #[ORM\Column]
     private int|null $userId = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'page_id')]
     private int|null $pageId = null;
 
     #[ORM\Column]
@@ -51,6 +52,16 @@ class Order
     #[Ignore]
     private Customer|null $customer = null;
 
+    #[ORM\OneToOne(
+        targetEntity: Page::class,
+    )]
+    #[ORM\JoinColumn(
+        name: 'page_id',
+        referencedColumnName: 'id'
+    )]
+    #[Ignore]
+    private Page|null $page = null;
+
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE, nullable: true, options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
@@ -63,14 +74,15 @@ class Order
 
     public function __construct(
         int|null $userId,
-        int|null $pageId,
+        int|null $pageId = null,
         int|null $customerId,
         string|null $referenceNumber,
         float|null $totalAmount,
         float|null $grandTotalAmount,
         string|null $status,
         array|null $metadata,
-        Customer|null $customer = null
+        Customer|null $customer = null,
+        Page|null $page = null
     ) {
         $this->userId = $userId;
         $this->pageId = $pageId;
@@ -81,6 +93,7 @@ class Order
         $this->status = $status;
         $this->metadata = $metadata;
         $this->customer = $customer;
+        $this->page = $page;
         $this->createdAt = new DateTime('now');
         $this->updatedAt = new DateTime('now');
     }
@@ -119,7 +132,7 @@ class Order
         return $this;
     }
 
-    public function getPageId(): int|null
+    public function getPageId(): ?int
     {
         return $this->pageId;
     }
@@ -130,7 +143,6 @@ class Order
 
         return $this;
     }
-
     public function getCustomerId(): int|null
     {
         return $this->customerId;
@@ -215,6 +227,17 @@ class Order
         return $this;
     }
 
+    public function getPage(): Page|null
+    {
+        return $this->page;
+    }
+
+    public function setPage(Page|null $page): static
+    {
+        $this->page = $page;
+
+        return $this;
+    }
 
     public function getCreatedAt(): DateTime|null
     {

@@ -24,7 +24,6 @@ class OrderController extends AbstractController
 
     #[Route('/order', name: 'app_orders_by_pageid', methods: ['GET'])]
     public function index(
-        #[MapQueryParameter] int|null $pageId,
         #[MapQueryParameter] int|null $page = 1,
         #[MapQueryParameter] int|null $pageSize = 10,
         #[MapQueryParameter] string|null $searchQuery = null
@@ -32,7 +31,7 @@ class OrderController extends AbstractController
     {
         try {
             $ordersQuery = $this->orderRepository->findByPageId(
-                $pageId,
+                $this->getUser()?->getId(),
                 $page,
                 $pageSize,
                 $searchQuery

@@ -8,7 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
- * @extends ServiceEntityRepository<Organization>
+ * @extends ServiceEntityRepository<Order>
  */
 class OrderRepository extends ServiceEntityRepository
 {
@@ -24,13 +24,14 @@ class OrderRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    public function findByPageId(int $pageId, int|null $page = 1, int|null $pageSize = 10, string|null $searchQuery = ''): mixed
+    public function findByPageId(int $userId, int|null $page = 1, int|null $pageSize = 10, string|null $searchQuery = ''): mixed
     {
         $query = $this->createQueryBuilder('o')
             ->leftJoin('o.customer', 'c')
-            ->select('o, c')
-            ->where('o.pageId = :pageId')
-            ->setParameter('pageId', $pageId)
+            ->leftJoin('o.page', 'p')
+            ->select('o, c, p')
+            ->where('p.userId = :userId')
+            ->setParameter('userId', $userId)
             ->setFirstResult(($page - 1) * $pageSize)
             ->setMaxResults($pageSize);
 
@@ -42,6 +43,7 @@ class OrderRepository extends ServiceEntityRepository
                     $query->expr()->like('o.totalAmount', ':searchQuery'),
                     $query->expr()->like('o.grandTotalAmount', ':searchQuery'),
                     $query->expr()->like('o.status', ':searchQuery'),
+                    $query->expr()->like('p.name', ':searchQuery'),
                 )
             )->setParameter('searchQuery', '%' . $searchQuery . '%');
         }
@@ -53,6 +55,7 @@ class OrderRepository extends ServiceEntityRepository
             'pageId' => $order->getPageId(),
             'customerId' => $order->getCustomerId(),
             'fullName' => $order->getCustomer()->getFullName(),
+            'pageName' => $order->getPage()->getName(),
             'totalAmount' => $order->getTotalAmount(),
             'grandTotalAmount' => $order->getGrandTotalAmount(),
             'referenceNumber' => $order->getReferenceNumber(),
