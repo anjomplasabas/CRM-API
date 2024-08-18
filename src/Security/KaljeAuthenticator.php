@@ -58,14 +58,16 @@ class KaljeAuthenticator extends AbstractAuthenticator
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         $data = $request->toArray();
-        
-        $user = $this->userRepository->findOneBy([
-            'type' => $data['type'],
-            'authId' => $data['authId']
-        ]);
+        if (isset($data['pages'])) {
+            $user = $this->userRepository->findOneBy([
+                'type' => $data['type'],
+                'authId' => $data['authId']
+            ]);
 
-        $event = new PageEvent($data['pages'], $user->getId());
-        $this->eventDispatcher->dispatch($event, PageEvent::NAME);
+            $event = new PageEvent($data['pages'], $user->getId());
+            $this->eventDispatcher->dispatch($event, PageEvent::NAME);
+        }
+        
 
         return null;
     }
