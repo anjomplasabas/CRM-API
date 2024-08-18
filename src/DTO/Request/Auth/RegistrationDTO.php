@@ -136,6 +136,7 @@ readonly class RegistrationDTO
             )
         ]
         public string|null $status,
+        public array|null $pages
     ) {
     }
 
