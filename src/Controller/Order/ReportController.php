@@ -26,7 +26,6 @@ class ReportController extends AbstractController
 
     #[Route('/templates', name: 'app_show_template_report_list', methods: ['GET'])]
     public function index(        
-        #[MapQueryParameter] int|null $pageId,
         #[MapQueryParameter] int|null $page = 1,
         #[MapQueryParameter] int|null $pageSize = 10,
         #[MapQueryParameter] string|null $searchQuery = null
@@ -34,7 +33,7 @@ class ReportController extends AbstractController
     {
         try {
             $reportTemplatesQuery = $this->reportTemplateRepository->findByPageId(
-                $pageId,
+                $this->getUser()?->getId(),
                 $page,
                 $pageSize,
                 $searchQuery

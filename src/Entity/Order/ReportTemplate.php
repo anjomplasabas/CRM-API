@@ -2,6 +2,7 @@
 
 namespace App\Entity\Order;
 
+use App\Entity\User\Page;
 use App\Repository\Order\ReportTemplateRepository;
 use DateTime;
 use Doctrine\DBAL\Types\Types;
@@ -34,6 +35,16 @@ class ReportTemplate
     #[ORM\Column]
     private array|null $parameters = null;
 
+    #[ORM\OneToOne(
+        targetEntity: Page::class,
+    )]
+    #[ORM\JoinColumn(
+        name: 'page_id',
+        referencedColumnName: 'id'
+    )]
+    #[Ignore]
+    private Page|null $page = null;
+
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE, nullable: true, options: [
         'default' => 'CURRENT_TIMESTAMP'
     ])]
@@ -50,7 +61,8 @@ class ReportTemplate
         string|null $name,
         string|null $fileName,
         array|null $headers,
-        array|null $parameters
+        array|null $parameters,
+        Page|null $page = null
     ) {
         $this->userId = $userId;
         $this->pageId = $pageId;
@@ -58,6 +70,7 @@ class ReportTemplate
         $this->fileName = $fileName;
         $this->headers = $headers;
         $this->parameters = $parameters;
+        $this->page = $page;
         $this->createdAt = new DateTime('now');
         $this->updatedAt = new DateTime('now');
     }
@@ -150,6 +163,18 @@ class ReportTemplate
     public function setParameters(array|null $parameters): static
     {
         $this->parameters = $parameters;
+
+        return $this;
+    }
+
+    public function getPage(): Page|null
+    {
+        return $this->page;
+    }
+
+    public function setPage(Page|null $page): static
+    {
+        $this->page = $page;
 
         return $this;
     }

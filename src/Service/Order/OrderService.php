@@ -8,6 +8,7 @@ use App\Entity\Order\ReportTemplate;
 use App\DTO\Request\Order\OrderDTO;
 use App\Repository\Order\OrderRepository;
 use App\Repository\Order\CustomerRepository;
+use App\Repository\User\PageRepository;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -16,7 +17,8 @@ readonly class OrderService
 {
     public function __construct(
         private readonly OrderRepository $orderRepository,
-        private readonly CustomerRepository $customerRepository
+        private readonly CustomerRepository $customerRepository,
+        private readonly PageRepository $pageRepository
     ) {
     }
 
@@ -37,6 +39,8 @@ readonly class OrderService
         );
         $this->customerRepository->save($customer);
         
+        $page = $this->pageRepository->find($orderDTO->pageId);
+
         $order = new Order(
             userId: $orderDTO->userId,
             pageId: $orderDTO->pageId,
@@ -46,7 +50,8 @@ readonly class OrderService
             grandTotalAmount: $orderDTO->totalAmount,
             status: 'PENDING',
             metadata: $orderDTO->metadata,
-            customer: $customer
+            customer: $customer,
+            facecbookPage: $page
         );
         $this->orderRepository->save($order);
         

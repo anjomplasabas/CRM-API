@@ -24,12 +24,13 @@ class ReportTemplateRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    public function findByPageId(int $pageId, int|null $page = 1, int|null $pageSize = 10, string|null $searchQuery = ''): mixed
+    public function findByPageId(int $userId, int|null $page = 1, int|null $pageSize = 10, string|null $searchQuery = ''): mixed
     {
         $query = $this->createQueryBuilder('r')
-            ->select('r')
-            ->where('r.pageId = :pageId')
-            ->setParameter('pageId', $pageId)
+            ->leftJoin('r.page', 'p')
+            ->select('r, p')
+            ->where('p.userId = :userId')
+            ->setParameter('userId', $userId)
             ->setFirstResult(($page - 1) * $pageSize)
             ->setMaxResults($pageSize);
 
@@ -38,6 +39,7 @@ class ReportTemplateRepository extends ServiceEntityRepository
                 $query->expr()->orX(
                     $query->expr()->like('r.fileName', ':searchQuery'),
                     $query->expr()->like('r.name', ':searchQuery'),
+                    $query->expr()->like('p.name', ':searchQuery'),
                 )
             )->setParameter('searchQuery', '%' . $searchQuery . '%');
         }
@@ -49,6 +51,7 @@ class ReportTemplateRepository extends ServiceEntityRepository
             'pageId' => $reportTemplate->getPageId(),
             'userId' => $reportTemplate->getUserId(),
             'name' => $reportTemplate->getName(),
+            'pageName' => $reportTemplate->getPage()->getName(),
             'fileName' => $reportTemplate->getFileName(),
             'headers' => implode(", ", $reportTemplate->getHeaders()),
             'parameters' => implode(", ", $reportTemplate->getParameters()),

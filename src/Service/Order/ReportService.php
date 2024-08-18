@@ -6,6 +6,7 @@ use App\Entity\Order\Order;
 use App\Entity\Order\ReportTemplate;
 use App\Repository\Order\OrderRepository;
 use App\Repository\Order\ReportTemplateRepository;
+use App\Repository\User\PageRepository;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -14,7 +15,8 @@ readonly class ReportService
 {
     public function __construct(
         private readonly OrderRepository $orderRepository,
-        private readonly ReportTemplateRepository $reportTemplateRepository
+        private readonly ReportTemplateRepository $reportTemplateRepository,
+        private readonly PageRepository $pageRepository
     ) {
     }
 
@@ -44,13 +46,16 @@ readonly class ReportService
             $headers = $cells;            
         }
 
+        $page = $this->pageRepository->find($pageId);
+
         $template = new ReportTemplate(
             pageId: $pageId,
             userId: $userId,
             name: $name,
             fileName: $fileName,
             headers: $headers,
-            parameters: $parameters
+            parameters: $parameters,
+            page: $page
         );
         $this->reportTemplateRepository->save($template);
 

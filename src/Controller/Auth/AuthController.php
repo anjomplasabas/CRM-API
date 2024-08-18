@@ -17,8 +17,9 @@ class AuthController extends AbstractController
 {
     public function __construct(
         private readonly JWTTokenManagerInterface $tokenManager,
-        private readonly RegistrationService $registrationService,
-    ) {}
+        private readonly RegistrationService $registrationService
+    ) {
+    }
 
     #[Route('/login', name: 'app_auth_login', methods: ['POST'])]
     public function login(#[CurrentUser] $user): JsonResponse
