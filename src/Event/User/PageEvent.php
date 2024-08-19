@@ -4,7 +4,7 @@ namespace App\Event\User;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
-class PageEvent extends Event
+final class PageEvent extends Event
 {
     public const NAME = 'pages.event';
     
