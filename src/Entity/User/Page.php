@@ -161,4 +161,9 @@ class Page
 
         return $this;
     }    
+
+    public function getFormattedCreatedAt(): string
+    {
+        return $this->createdAt->format('M d, Y h:i A');
+    }            
 }

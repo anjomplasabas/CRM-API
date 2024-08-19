@@ -46,7 +46,7 @@ class PageRepository extends ServiceEntityRepository
         $pages = array_map(fn ($page): array => [
             'id' => $page->getId(),
             'name' => $page->getName(),
-            'createdAt' => $page->getCreatedAt(),
+            'createdAt' => $page->getFormattedCreatedAt(),
             'updatedAt' => $page->getUpdatedAt(),
         ], iterator_to_array($paginator));
 

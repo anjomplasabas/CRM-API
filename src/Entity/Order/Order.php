@@ -265,6 +265,6 @@ class Order
 
     public function getFormattedCreatedAt(): string
     {
-        return $this->createdAt->format('M d, Y h:i: A'); // Customize the format as needed
+        return $this->createdAt->format('M d, Y h:i A'); 
     }    
 }
