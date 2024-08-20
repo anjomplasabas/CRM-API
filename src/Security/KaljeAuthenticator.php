@@ -64,8 +64,9 @@ class KaljeAuthenticator extends AbstractAuthenticator
                 'authId' => $data['authId']
             ]);
 
-        $event = new PageEvent($data['pages'], $user->getId());
-        $this->eventDispatcher->dispatch($event);
+            $event = new PageEvent($data['pages'], $user->getId());
+            $this->eventDispatcher->dispatch($event);
+        }
 
         return null;
     }
