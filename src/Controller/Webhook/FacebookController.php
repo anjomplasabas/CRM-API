@@ -2,6 +2,7 @@
 
 namespace App\Controller\Webhook;
 
+use App\Repository\User\PageRepository;
 use App\Service\ThirdParty\FacebookService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +17,8 @@ class FacebookController extends AbstractController
 
     public function __construct(
         private readonly FacebookService $facebookService,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly PageRepository $pageRepository
     ) {}
 
     #[Route('/callback/facebook-verify', name: 'app_webhook_facebook_verify', methods: ['GET'])]
@@ -51,9 +53,9 @@ class FacebookController extends AbstractController
     public function getConversationList(Request $request): JsonResponse
     {
         $pageId = $request->query->get('pageId');
-        $pageToken = 'EAAcd4WZCBKHIBO3ZBtlZBhpNaKpkJpZBmxEYPUKj8G8aTtXiDi3DeMESXoPWZA1RqvuHf2pf3bKud3cuR7ckEOGDRXCvg2XHCMDPU0H4aZCPJjQlVYGQjNxnehRxZC4gHAvLOEums3oyxCVYOnlcanruw6j4DunivOpIKSWZASQxXMtG1nk0HHeEBM1byByZAhZBXrF5iXR4EZCmXaa5ZAydom7kWHJZB3EKVgWUZD';
-        // Add logic to fetch page from DB and use accessToken
-        $conversations = $this->facebookService->getConversations($pageId, $pageToken);
+        $userAccessToken = $request->query->get('userAccessToken');
+        $pageAccessToken = $this->facebookService->getPageAccessToken($pageId, $userAccessToken);
+        $conversations = $this->facebookService->getConversations($pageId, $pageAccessToken);
         $response = array_map(function($conversation) use ($pageId) {
             $customer = array_filter($conversation['participants']['data'], function ($customer) use ($pageId) {
                 return $customer['id'] != $pageId;
@@ -70,7 +72,36 @@ class FacebookController extends AbstractController
         }, $conversations['data']);
 
         return $this->json([
-            'data' => $response
+            'data' => $response,
+            'metadata' => $conversations['paging']
+        ]);
+    }
+
+    #[Route('/facebook/messages', name: 'app_webhook_facebook_messages', methods: ['GET'])]
+    public function getMessageList(Request $request): JsonResponse
+    {
+        $pageId = $request->query->get('pageId');
+        $conversationId = $request->query->get('conversationId');
+        $userAccessToken = $request->query->get('userAccessToken');
+        $paginate = $request->query->has('paginate') ? $request->query->get('paginate') : '';
+        $pageAccessToken = $this->facebookService->getPageAccessToken($pageId, $userAccessToken);
+        $messages = $this->facebookService->getMessages($conversationId, $pageAccessToken, $paginate);
+        $response = array_map(function($message) {
+            return [
+                'from' => $message['from'],
+                'to' => $message['to']['data'][0],
+                'message' => $message['message'],
+                'messageId' => $message['id'],
+                'createdTime' => $message['created_time']
+            ];
+        }, $messages['data']);
+        
+        return $this->json([
+            'data' => $response,
+            'metadata' => array_merge(
+                isset($messages['paging']) ? $messages['paging'] : [],
+                ['conversationId' => $conversationId]
+            )
         ]);
     }
 }
