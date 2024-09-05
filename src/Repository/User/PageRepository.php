@@ -46,7 +46,8 @@ class PageRepository extends ServiceEntityRepository
         $pages = array_map(fn ($page): array => [
             'id' => $page->getId(),
             'name' => $page->getName(),
-            'createdAt' => $page->getFormattedCreatedAt(),
+            'facebookPageId' => $page->getFacebookPageId(),
+            'createdAt' => $page->getCreatedAt(),
             'updatedAt' => $page->getUpdatedAt(),
         ], iterator_to_array($paginator));
 
@@ -57,5 +58,10 @@ class PageRepository extends ServiceEntityRepository
             'page' => $page,
             'pageSize' => $pageSize,
         ];
-    }    
+    }
+
+    public function findByFacebookPageId(string $facebookPageId): Page
+    {
+        return $this->findOneBy(['facebookPageId' => $facebookPageId]);
+    }
 }

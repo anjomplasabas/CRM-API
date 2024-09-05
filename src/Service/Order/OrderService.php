@@ -51,7 +51,7 @@ readonly class OrderService
             status: 'PENDING',
             metadata: $orderDTO->metadata,
             customer: $customer,
-            facecbookPage: $page
+            page: $page
         );
         $this->orderRepository->save($order);
         

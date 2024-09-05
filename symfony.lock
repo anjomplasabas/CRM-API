@@ -38,6 +38,9 @@
             "migrations/.gitignore"
         ]
     },
+    "kreait/firebase-bundle": {
+        "version": "5.4.0"
+    },
     "lexik/jwt-authentication-bundle": {
         "version": "3.0",
         "recipe": {
