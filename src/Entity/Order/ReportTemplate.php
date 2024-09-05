@@ -201,5 +201,10 @@ class ReportTemplate
         $this->updatedAt = $updatedAt;
 
         return $this;
-    }    
+    }
+
+    public function getFormattedCreatedAt(): string
+    {
+        return $this->createdAt->format('M d, Y h:i A');
+    }        
 }

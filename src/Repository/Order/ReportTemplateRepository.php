@@ -55,7 +55,7 @@ class ReportTemplateRepository extends ServiceEntityRepository
             'fileName' => $reportTemplate->getFileName(),
             'headers' => implode(", ", $reportTemplate->getHeaders()),
             'parameters' => implode(", ", $reportTemplate->getParameters()),
-            'createdAt' => $reportTemplate->getCreatedAt(),
+            'createdAt' => $reportTemplate->getFormattedCreatedAt(),
             'updatedAt' => $reportTemplate->getUpdatedAt(),
         ], iterator_to_array($paginator));
 

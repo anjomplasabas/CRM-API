@@ -26,7 +26,7 @@ services:
         arguments:
             $pageRepository: '@App\Repository\User\PageRepository'
             $entityManager: '@doctrine.orm.entity_manager'
-    App\EventSubscriber\User\PageSubscriber:
-        tags: ['kernel.event_subscriber']            
+    App\EventListener\User\PageListener:
+        tags: ['kernel.event_listener']            
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
