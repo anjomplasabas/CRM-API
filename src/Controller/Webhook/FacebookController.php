@@ -43,6 +43,7 @@ class FacebookController extends AbstractController
     #[Route('/callback/facebook-verify', name: 'app_webhook_facebook_subscribe', methods: ['POST'])]
     public function subscribe(Request $request)
     {
+        $this->logger->info(' === FROM FACEBOOK CALLBACK === ');
         $this->logger->info(json_encode($request->toArray()));
         return $this->json(
             $request->toArray()
@@ -54,8 +55,11 @@ class FacebookController extends AbstractController
     {
         $pageId = $request->query->get('pageId');
         $userAccessToken = $request->query->get('userAccessToken');
+        // Get page access token
         $pageAccessToken = $this->facebookService->getPageAccessToken($pageId, $userAccessToken);
+        // Get list of conversations
         $conversations = $this->facebookService->getConversations($pageId, $pageAccessToken);
+        // Prepare response of conversation
         $response = array_map(function($conversation) use ($pageId) {
             $customer = array_filter($conversation['participants']['data'], function ($customer) use ($pageId) {
                 return $customer['id'] != $pageId;
@@ -80,12 +84,15 @@ class FacebookController extends AbstractController
     #[Route('/facebook/messages', name: 'app_webhook_facebook_messages', methods: ['GET'])]
     public function getMessageList(Request $request): JsonResponse
     {
-        $pageId = $request->query->get('pageId');
         $conversationId = $request->query->get('conversationId');
         $userAccessToken = $request->query->get('userAccessToken');
+        $pageId = $request->query->get('pageId');
         $paginate = $request->query->has('paginate') ? $request->query->get('paginate') : '';
+        // Get page access token
         $pageAccessToken = $this->facebookService->getPageAccessToken($pageId, $userAccessToken);
+        // Get list of messages
         $messages = $this->facebookService->getMessages($conversationId, $pageAccessToken, $paginate);
+        // Prepare response of messages
         $response = array_map(function($message) {
             return [
                 'from' => $message['from'],
@@ -102,6 +109,34 @@ class FacebookController extends AbstractController
                 isset($messages['paging']) ? $messages['paging'] : [],
                 ['conversationId' => $conversationId]
             )
+        ]);
+    }
+
+    #[Route('/facebook/messages', name: 'app_webhook_facebook_send_message', methods: ['POST'])]
+    public function sendMessageRequest(Request $request): JsonResponse
+    {
+        $parameters = $request->toArray();
+        $this->logger->info(json_encode($parameters));
+        // Get page access token
+        $pageAccessToken = $this->facebookService->getPageAccessToken(
+            $parameters['pageId'],
+            $parameters['userAccessToken']
+        );
+        // Send message request to facebook
+        $message = $this->facebookService->sendMessage(
+            $parameters['customerId'],
+            $parameters['options'],
+            $pageAccessToken,
+            $parameters['pageId']
+        );
+
+        $messageDetails = $this->facebookService->getMessageDetails(
+            $message['message_id'],
+            $pageAccessToken
+        );
+
+        return $this->json([
+            'data' => $messageDetails
         ]);
     }
 }
