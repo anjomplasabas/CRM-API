@@ -71,6 +71,7 @@ class FacebookController extends AbstractController
                 'customerInitials' => substr($customer[0]['name'], 0, 1),
                 'messageCount' => $conversation['message_count'],
                 'lastMessage' => $conversation['messages']['data'][0]['message'],
+                'attachments' => isset($conversaton['messages']['data'][0]['attachments']) ? $conversation['messages']['data'][0]['attachments'] : [],
                 'lastMessageTime' => $conversation['messages']['data'][0]['created_time']
             ];
         }, $conversations['data']);

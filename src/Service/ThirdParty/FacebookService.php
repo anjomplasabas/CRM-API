@@ -10,7 +10,7 @@ class FacebookService
     private const string BASE_URL = 'https://graph.facebook.com/v20.0/';
 
     private const array CONVERSATION_FIELDS = [
-        'fields' => 'participants,name,messages.limit(1){from,message,created_time},message_count'
+        'fields' => 'participants,name,messages.limit(1){from,message,created_time,attachments},message_count'
     ];
 
     private const array MESSAGE_DETAILS = [
