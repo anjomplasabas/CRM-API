@@ -14,7 +14,7 @@ class FacebookService
     ];
 
     private const array MESSAGE_DETAILS = [
-        'fields' => 'from,to,message,created_time'
+        'fields' => 'from,to,message,attachments,created_time'
     ];
 
     private const array MESSAGE_FIELDS = [

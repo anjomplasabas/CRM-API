@@ -99,6 +99,7 @@ class FacebookController extends AbstractController
                 'from' => $message['from'],
                 'to' => $message['to']['data'][0],
                 'message' => $message['message'],
+                'attachments' => isset($message['attachments']) ? $message['attachments'] : [],
                 'messageId' => $message['id'],
                 'createdTime' => $message['created_time']
             ];
