@@ -166,7 +166,7 @@ class FacebookService
                                 'buttons' => [
                                     [
                                         'title' => 'ORDER HERE!',
-                                        'url' => 'https://localhost:3000/order-form?token='.$options['token'],
+                                        'url' => 'https://wano-app.outcrate.xyz/order-form?token='.$options['token'],
                                         'type' => 'web_url'
                                     ]
                                 ]
