@@ -121,12 +121,6 @@ class FacebookService
 
     public function sendMessage(string $customerId, array $options, string $pageAccessToken, string $pageId): array
     {
-        $mesage = [];
-        if (isset($options['message'])) {
-            $message =[
-                'text' => $options['message']
-            ];
-        }
         $result = $this->client->request(
             'POST',
             self::BASE_URL . $pageId . '/messages?' . http_build_query([
@@ -148,4 +142,42 @@ class FacebookService
 
         return json_decode($result->getContent(), true);
     }
+
+    public function sendMessageWithAttachment(string $customerId, array $options, string $pageAccessToken, string $pageId): array
+    {
+        $result = $this->client->request(
+            'POST',
+            self::BASE_URL . $pageId . '/messages?' . http_build_query([
+                'access_token' => $pageAccessToken
+            ]),
+            [
+                'json' => [
+                    'recipient' => [
+                        'id' => $customerId
+                    ],
+                    'messaging_type' => self::MESSAGING_TYPE,
+                    'tag' => self::MESSAGE_TAG,
+                    'message' => [
+                        'attachment' => [
+                            'type' => 'template',
+                            'payload' => [
+                                'template_type' => 'button',
+                                'text' => 'Click the button to complete your order!',
+                                'buttons' => [
+                                    [
+                                        'title' => 'ORDER HERE!',
+                                        'url' => 'https://localhost:3000/order-form?token='.$options['token'],
+                                        'type' => 'web_url'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        );
+        
+        return json_decode($result->getContent(), true);
+    }
+        
 }

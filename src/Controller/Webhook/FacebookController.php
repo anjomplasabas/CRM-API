@@ -141,4 +141,32 @@ class FacebookController extends AbstractController
             'data' => $messageDetails
         ]);
     }
+
+    #[Route('/facebook/messages/order-form', name: 'app_webhook_facebook_send_message_order_form', methods: ['POST'])]
+    public function sendOrderFormRequest(Request $request): JsonResponse
+    {
+        $parameters = $request->toArray();
+        $this->logger->info(json_encode($parameters));
+        // Get page access token
+        $pageAccessToken = $this->facebookService->getPageAccessToken(
+            $parameters['pageId'],
+            $parameters['userAccessToken']
+        );
+        // Send message request to facebook
+        $message = $this->facebookService->sendMessageWithAttachment(
+            $parameters['customerId'],
+            $parameters['options'],
+            $pageAccessToken,
+            $parameters['pageId']
+        );
+
+        $messageDetails = $this->facebookService->getMessageDetails(
+            $message['message_id'],
+            $pageAccessToken
+        );
+
+        return $this->json([
+            'data' => $messageDetails
+        ]); 
+    }
 }
