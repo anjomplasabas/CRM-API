@@ -23,7 +23,8 @@ class FacebookService
 
     public function __construct(
         private readonly HttpClientInterface $client,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly string $baseUrl
     ) {}
 
     public function getConversations(
@@ -132,8 +133,41 @@ class FacebookService
         string $customerId,
         array $options,
         string $pageAccessToken,
-        string $pageId
+        string $pageId,
+        int $userId,
     ): array {
+        $options = array_merge($options, [
+            'pageId' => $pageId,
+            'facebookProfileId' => $customerId,
+            'userId' => $userId
+        ]);
+        $token = base64_encode(json_encode($options));
+        $tmp = [
+            'recipient' => [
+                'id' => $customerId,
+            ],
+            'tag' => self::MESSAGE_TAG,
+            'message' => [
+                'attachment' => [
+                    'type' => 'template',
+                    'payload' => [
+                        'template_type' => 'generic',
+                        'text' => 'Click the button to complete your order!',
+                        'buttons' => [
+                            [
+                                'type' => 'web_url',
+                                'url' => $this->baseUrl.'?token=' . $token,
+                                'title' => 'ORDER NOW!',
+                                'webview_height_ratio' => 'tall',
+                                'messenger_extensions' => true,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $this->logger->info(' === PAYLOAD FOR WEB URL === ');
+        $this->logger->info(json_encode($tmp));
         $result = $this->client->request(
             'POST',
             self::BASE_URL . $pageId . '/messages?' . http_build_query([
@@ -144,7 +178,6 @@ class FacebookService
                     'recipient' => [
                         'id' => $customerId,
                     ],
-                    'messaging_type' => self::MESSAGING_TYPE,
                     'tag' => self::MESSAGE_TAG,
                     'message' => [
                         'attachment' => [
@@ -155,7 +188,7 @@ class FacebookService
                                 'buttons' => [
                                     [
                                         'type' => 'web_url',
-                                        'url' => 'https://wano-app.outcrate.xyz/order-form?token=' . $options['token'],
+                                        'url' => $this->baseUrl.'?token=' . $token,
                                         'title' => 'ORDER NOW!',
                                         'webview_height_ratio' => 'tall',
                                         'messenger_extensions' => true,
@@ -167,34 +200,7 @@ class FacebookService
                 ],
             ]
         );
-        $this->logger->info(' === PAYLOAD === ');
-        $this->logger->info(json_encode([
-            'json' => [
-                'recipient' => [
-                    'id' => $customerId,
-                ],
-                'messaging_type' => self::MESSAGING_TYPE,
-                'tag' => self::MESSAGE_TAG,
-                'message' => [
-                    'attachment' => [
-                        'type' => 'template',
-                        'payload' => [
-                            'template_type' => 'generic',
-                            'buttons' => [
-                                [
-                                    'type' => 'web_url',
-                                    'url' => 'https://wano-app.outcrate.xyz/order-form?token=' . $options['token'],
-                                    'title' => 'ORDER HERE!',
-                                    'webview_height_ratio' => 'tall',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ]));
-        $this->logger->info(' === HERE === ');
-        $this->logger->info(json_encode($result->toArray()));
+        
         return json_decode($result->getContent(), true);
     }
 }

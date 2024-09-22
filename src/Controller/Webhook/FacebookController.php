@@ -227,13 +227,26 @@ class FacebookController extends AbstractController
             $parameters['customerId'],
             $parameters['options'],
             $pageAccessToken,
-            $parameters['pageId']
+            $parameters['pageId'],
+            $this->getUser()?->getId()
         );
 
         $messageDetails = $this->facebookService->getMessageDetails(
             $message['message_id'],
             $pageAccessToken
         );
+        // Prepare firebase message
+        $firebaseMessage = [
+            'from' => $messageDetails['from'],
+            'to' => $messageDetails['to']['data'][0],
+            'conversationId' => $parameters['conversationId'],
+            'message' => $messageDetails['message'],
+            'attachments' => isset($messageDetails['attachments']) ? $messageDetails['attachments'] : [],
+            'messageId' => $messageDetails['id'],
+            'createdTime' => $messageDetails['created_time'],
+            'createdTimestamp' => new DateTime($messageDetails['created_time'])
+        ];
+        $this->firebaseDatabase->insertMessages([$firebaseMessage]);
 
         return $this->json([
             'data' => $messageDetails

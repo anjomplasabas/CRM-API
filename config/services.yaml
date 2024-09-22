@@ -27,6 +27,9 @@ services:
             $pageRepository: '@App\Repository\User\PageRepository'
             $entityManager: '@doctrine.orm.entity_manager'
     App\EventListener\User\PageListener:
-        tags: ['kernel.event_listener']            
+        tags: ['kernel.event_listener'] 
+    App\Service\ThirdParty\FacebookService:
+      arguments:
+        $baseUrl: '%env(BASE_URL)%'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
