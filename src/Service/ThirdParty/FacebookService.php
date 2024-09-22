@@ -7,53 +7,32 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class FacebookService
 {
-    private const string BASE_URL = 'https://graph.facebook.com/v20.0/';
-
-    private const array CONVERSATION_FIELDS = [
-        'fields' => 'participants,name,messages.limit(1){from,message,created_time,attachments},message_count'
+    private const BASE_URL = 'https://graph.facebook.com/v20.0/';
+    private const CONVERSATION_FIELDS = [
+        'fields' => 'participants,name,messages.limit(1){from,message,created_time,attachments},message_count',
     ];
-
-    private const array MESSAGE_DETAILS = [
-        'fields' => 'from,to,message,attachments,created_time'
+    private const MESSAGE_DETAILS = [
+        'fields' => 'from,to,message,attachments,created_time',
     ];
-
-    private const array MESSAGE_FIELDS = [
-        'fields' => 'from,to,message,created_time',
-        'limit' => 12
+    private const MESSAGE_FIELDS = [
+        'fields' => 'from,to,message,attachments,created_time',
+        'limit' => 12,
     ];
-
-    private const string MESSAGE_TAG = 'ACCOUNT_UPDATE';
-
-    private const string MESSAGING_TYPE = 'MESSAGE_TAG';
-
-    private const array MESSAGING_WEBVIEW_TEMPLATE = [
-        'type' => 'template',
-        'payload' => [
-            'template_type' => 'button',
-            'text' => 'Click the button to complete your order!',
-            'buttons' => [
-                [
-                    'title' => 'ORDER HERE!',
-                    'url' => 'https://localhost:3000/order-form?token=[TOKEN]',
-                    'type' => 'web_url'
-                ]
-            ]
-        ]
-    ];
+    private const MESSAGE_TAG = 'ACCOUNT_UPDATE';
+    private const MESSAGING_TYPE = 'MESSAGE_TAG';
 
     public function __construct(
         private readonly HttpClientInterface $client,
         private readonly LoggerInterface $logger
     ) {}
 
-    public function getConversations(string $pageId, string $pageAccessToken): array
-    {
-        $queryParameters = array_merge(
-            self::CONVERSATION_FIELDS,
-            [
-                'access_token' => $pageAccessToken
-            ]
-        );
+    public function getConversations(
+        string $pageId,
+        string $pageAccessToken
+    ): array {
+        $queryParameters = array_merge(self::CONVERSATION_FIELDS, [
+            'access_token' => $pageAccessToken,
+        ]);
         $result = $this->client->request(
             'GET',
             self::BASE_URL . $pageId . '/conversations?' . http_build_query($queryParameters)
@@ -62,21 +41,22 @@ class FacebookService
         return json_decode($result->getContent(), true);
     }
 
-    public function getMessages(string $conversationId, string $pageAccessToken, ?string $paginate): array
-    {
-        $queryParameters = array_merge(
-            self::MESSAGE_FIELDS,
-            [
-                'access_token' => $pageAccessToken
-            ]
-        );
+    public function getMessages(
+        string $conversationId,
+        string $pageAccessToken,
+        ?string $paginate = null,
+        ?int $limit = null
+    ): array {
+        $queryParameters = array_merge(self::MESSAGE_FIELDS, [
+            'access_token' => $pageAccessToken,
+        ]);
         if ($paginate) {
-            $queryParameters = array_merge(
-                $queryParameters,
-                [
-                    'after' => $paginate
-                ]
-            );
+            $queryParameters = array_merge($queryParameters, [
+                'after' => $paginate,
+            ]);
+        }
+        if ($limit) {
+            $queryParameters['limit'] = $limit;
         }
         $result = $this->client->request(
             'GET',
@@ -86,12 +66,14 @@ class FacebookService
         return json_decode($result->getContent(), true);
     }
 
-    public function getPageAccessToken(string $pageId, string $userAccessToken): string
-    {
+    public function getPageAccessToken(
+        string $pageId,
+        string $userAccessToken
+    ): string {
         $result = $this->client->request(
             'GET',
             self::BASE_URL . 'me/accounts?' . http_build_query([
-                'access_token' => $userAccessToken
+                'access_token' => $userAccessToken,
             ])
         );
         $pages = json_decode($result->getContent(), true);
@@ -103,14 +85,13 @@ class FacebookService
         return $page['access_token'];
     }
 
-    public function getMessageDetails(string $messageId, string $pageAccessToken): array
-    {
-        $queryParameters = array_merge(
-            self::MESSAGE_DETAILS,
-            [
-                'access_token' => $pageAccessToken
-            ]
-        );
+    public function getMessageDetails(
+        string $messageId,
+        string $pageAccessToken
+    ): array {
+        $queryParameters = array_merge(self::MESSAGE_DETAILS, [
+            'access_token' => $pageAccessToken,
+        ]);
         $result = $this->client->request(
             'GET',
             self::BASE_URL . $messageId . '?' . http_build_query($queryParameters)
@@ -119,41 +100,49 @@ class FacebookService
         return json_decode($result->getContent(), true);
     }
 
-    public function sendMessage(string $customerId, array $options, string $pageAccessToken, string $pageId): array
-    {
+    public function sendMessage(
+        string $customerId,
+        array $options,
+        string $pageAccessToken,
+        string $pageId
+    ): array {
         $result = $this->client->request(
             'POST',
             self::BASE_URL . $pageId . '/messages?' . http_build_query([
-                'access_token' => $pageAccessToken
+                'access_token' => $pageAccessToken,
             ]),
             [
                 'json' => [
                     'recipient' => [
-                        'id' => $customerId
+                        'id' => $customerId,
                     ],
                     'messaging_type' => self::MESSAGING_TYPE,
                     'tag' => self::MESSAGE_TAG,
                     'message' => [
-                        'text' => $options['message']
-                    ]
-                ]
+                        'text' => $options['message'],
+                    ],
+                ],
             ]
         );
 
         return json_decode($result->getContent(), true);
     }
 
-    public function sendMessageWithAttachment(string $customerId, array $options, string $pageAccessToken, string $pageId): array
-    {
+    public function sendMessageWithAttachment(
+        string $customerId,
+        array $options,
+        string $pageAccessToken,
+        string $pageId
+    ): array {
         $result = $this->client->request(
             'POST',
             self::BASE_URL . $pageId . '/messages?' . http_build_query([
-                'access_token' => $pageAccessToken
+                'access_token' => $pageAccessToken,
             ]),
             [
                 'json' => [
                     'recipient' => [
-                        'id' => $customerId
+                        'id' => $customerId,
                     ],
                     'messaging_type' => self::MESSAGING_TYPE,
                     'tag' => self::MESSAGE_TAG,
@@ -165,19 +154,47 @@ class FacebookService
                                 'text' => 'Click the button to complete your order!',
                                 'buttons' => [
                                     [
-                                        'title' => 'ORDER HERE!',
-                                        'url' => 'https://wano-app.outcrate.xyz/order-form?token='.$options['token'],
-                                        'type' => 'web_url'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                                        'type' => 'web_url',
+                                        'url' => 'https://wano-app.outcrate.xyz/order-form?token=' . $options['token'],
+                                        'title' => 'ORDER NOW!',
+                                        'webview_height_ratio' => 'tall',
+                                        'messenger_extensions' => true,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ]
         );
-        
+        $this->logger->info(' === PAYLOAD === ');
+        $this->logger->info(json_encode([
+            'json' => [
+                'recipient' => [
+                    'id' => $customerId,
+                ],
+                'messaging_type' => self::MESSAGING_TYPE,
+                'tag' => self::MESSAGE_TAG,
+                'message' => [
+                    'attachment' => [
+                        'type' => 'template',
+                        'payload' => [
+                            'template_type' => 'generic',
+                            'buttons' => [
+                                [
+                                    'type' => 'web_url',
+                                    'url' => 'https://wano-app.outcrate.xyz/order-form?token=' . $options['token'],
+                                    'title' => 'ORDER HERE!',
+                                    'webview_height_ratio' => 'tall',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]));
+        $this->logger->info(' === HERE === ');
+        $this->logger->info(json_encode($result->toArray()));
         return json_decode($result->getContent(), true);
     }
-        
 }
