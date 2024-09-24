@@ -166,8 +166,8 @@ class FacebookService
                 ],
             ],
         ];
-        $this->logger->info(' === PAYLOAD FOR WEB URL === ');
-        $this->logger->info(json_encode($tmp));
+        $this->logger->info(' === ORDER FORM URL === ');
+        $this->logger->info($this->baseUrl.'?token=' . $token);
         $result = $this->client->request(
             'POST',
             self::BASE_URL . $pageId . '/messages?' . http_build_query([

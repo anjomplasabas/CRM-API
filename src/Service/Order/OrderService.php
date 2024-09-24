@@ -24,8 +24,10 @@ readonly class OrderService
 
     public function handle(OrderDTO $orderDTO): Order|null
     {
+        $page = $this->pageRepository->findByFacebookPageId($orderDTO->pageId);
+        
         $customer = new Customer(
-            pageId: $orderDTO->pageId,
+            pageId: $page->getId(),
             facebookProfileId: $orderDTO->facebookProfileId,
             fullName: $orderDTO->fullName,
             mobileNumber: $orderDTO->mobileNumber,
@@ -38,12 +40,10 @@ readonly class OrderService
             zipCode: $orderDTO->zipCode
         );
         $this->customerRepository->save($customer);
-        
-        $page = $this->pageRepository->find($orderDTO->pageId);
 
         $order = new Order(
             userId: $orderDTO->userId,
-            pageId: $orderDTO->pageId,
+            pageId: $page->getId(),
             customerId: $customer->getId(),
             referenceNumber: time(),
             totalAmount: $orderDTO->totalAmount,

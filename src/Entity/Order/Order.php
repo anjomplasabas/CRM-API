@@ -73,14 +73,14 @@ class Order
     private DateTime|null $updatedAt = null;
 
     public function __construct(
-        int|null $userId,
+        int|null $userId = null,
         int|null $pageId = null,
-        int|null $customerId,
-        string|null $referenceNumber,
-        float|null $totalAmount,
-        float|null $grandTotalAmount,
-        string|null $status,
-        array|null $metadata,
+        int|null $customerId = null,
+        string|null $referenceNumber = null,
+        float|null $totalAmount = null,
+        float|null $grandTotalAmount = null,
+        string|null $status = null,
+        array|null $metadata = null,
         Customer|null $customer = null,
         Page|null $page = null
     ) {

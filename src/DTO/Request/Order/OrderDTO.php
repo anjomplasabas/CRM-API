@@ -8,7 +8,7 @@ readonly class OrderDTO
 {
     public function __construct(
         public int|null $userId,
-        public int|null $pageId,
+        public string|null $pageId,
         public string|null $facebookProfileId,    
         #[
             Assert\NotNull(
