@@ -6,6 +6,7 @@ use App\Entity\Profile\Profile;
 use App\DTO\Request\User\ProfileDTO;
 use App\Repository\User\ProfileRepository;
 use App\Repository\User\UserRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -33,7 +34,7 @@ class ProfileController extends AbstractController
     public function updateProfile(#[MapRequestPayload] ProfileDTO $profileDTO): JsonResponse
     {
         $user = $this->getUser();
-        $profile = $this->profileRepository->updateProfile($user->getId(), $profileDTO);
+        $profile = $this->profileRepository->updateProfile($user?->getId(), $profileDTO);
         // Update user status
         if ($profileDTO->status) {
             $user->setStatus($profileDTO->status);

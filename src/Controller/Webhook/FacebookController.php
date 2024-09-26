@@ -153,6 +153,8 @@ class FacebookController extends AbstractController
         usort($messagesResponse, function ($a, $b) {
             return new DateTime($a['createdTime']) <=> new DateTime($b['createdTime']);
         });
+        $this->logger->info(' === MESSAGES ==== ');
+        $this->logger->info(json_encode($messagesResponse));
         $this->firebaseDatabase->insertMessages($messagesResponse);
 
         return $this->json([

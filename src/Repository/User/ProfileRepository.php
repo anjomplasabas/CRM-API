@@ -6,6 +6,7 @@ use App\Entity\User\Profile;
 use App\DTO\Request\User\ProfileDTO;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
@@ -36,10 +37,9 @@ class ProfileRepository extends ServiceEntityRepository
         
     }
 
-    public function updateProfile($id, ProfileDTO $profileDTO): Profile|null
+    public function updateProfile(int $userId, ProfileDTO $profileDTO): Profile|null
     {
-        $profile = $this->find($id);
-
+        $profile = $this->findOneBy(['userId' => $userId]);
         if (!$profile) {
             return null;
         }

@@ -87,7 +87,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'type' => $this->getType(),
             'roles' => $this->getRoles(),
             'authId' => $this->getAuthId(),
-            'isForgot' => $this->isForgot(),
+            'isForgot' => $this->getIsForgot(),
             'status' => $this->getStatus(),
             'profile' => $this->getProfile(),
             'createdAt' => $this->getCreatedAt(),

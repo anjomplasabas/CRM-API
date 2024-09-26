@@ -82,8 +82,8 @@ readonly class ReportService
                 
                 if (method_exists($order, $methodName)) {
                     $data[$iterator][] =  $order->$methodName();
-                } elseif($parameter == 'products') {
-                    $data[$iterator][] = $order->getMetadata()['product'];
+                } elseif($parameter == 'orderSummary') {
+                    $data[$iterator][] = $order->getMetadata()['orderSummary'];
                 } elseif(method_exists($order->getCustomer(), $methodName)) {
                     $data[$iterator][] = $order->getCustomer()->$methodName();
                 } else {
