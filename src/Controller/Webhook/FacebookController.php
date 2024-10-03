@@ -80,7 +80,7 @@ class FacebookController extends AbstractController
                     'customer' => current($customer),
                     'pageId' => $pageId,
                     'customerInitials' => substr($customer[0]['name'], 0, 1),
-                    'lastMessage' => $conversation['messages']['data'][0]['message'],
+                    'lastMessage' => $conversation['messages']['data'][0]['message'] ?? 'Attachment',
                     'attachments' => isset($conversaton['messages']['data'][0]['attachments']) ? $conversation['messages']['data'][0]['attachments'] : [],
                     'lastMessageTime' => $conversation['messages']['data'][0]['created_time'],
                     'lastMessageTimestamp' => new DateTime($conversation['messages']['data'][0]['created_time'])
@@ -126,6 +126,8 @@ class FacebookController extends AbstractController
             null,
             $messagesResponse ? count($messagesResponse): null
         );
+        $this->logger->info(' === RAW MESSAGES ==== ');
+        $this->logger->info(json_encode($messages));
         // This means that a call from firebase database was done
         if ($lastMessageId) {
             $existingFromFirebase = array_filter($messagesResponse, function ($message) use ($lastMessageId) {
@@ -145,6 +147,7 @@ class FacebookController extends AbstractController
                 'conversationId' => $conversationId,
                 'message' => $message['message'],
                 'attachments' => isset($message['attachments']) ? $message['attachments'] : [],
+                'sticker' => isset($message['sticker']) ? $message['sticker'] : [],
                 'messageId' => $message['id'],
                 'createdTime' => $message['created_time'],
                 'createdTimestamp' => new DateTime($message['created_time'])
@@ -202,7 +205,7 @@ class FacebookController extends AbstractController
             'customer' => $messageDetails['to']['data'][0],
             'pageId' => $parameters['pageId'],
             'customerInitials' => substr($messageDetails['to']['data'][0]['name'], 0, 1),
-            'lastMessage' => $firebaseMessage['message'],
+            'lastMessage' => $firebaseMessage['message'] ?? 'Attachment',
             'attachments' => isset($firebaseMessage['attachments']) ? $firebaseMessage['attachments'] : [],
             'lastMessageTime' => $firebaseMessage['createdTime'],
             'lastMessageTimestamp' => $firebaseMessage['createdTimestamp']

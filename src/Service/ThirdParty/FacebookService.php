@@ -9,13 +9,13 @@ class FacebookService
 {
     private const BASE_URL = 'https://graph.facebook.com/v20.0/';
     private const CONVERSATION_FIELDS = [
-        'fields' => 'participants,name,messages.limit(1){from,message,created_time,attachments},message_count',
+        'fields' => 'participants,name,messages.limit(1){from,message,created_time,attachments,sticker},message_count',
     ];
     private const MESSAGE_DETAILS = [
-        'fields' => 'from,to,message,attachments,created_time',
+        'fields' => 'from,to,message,attachments,sticker,created_time',
     ];
     private const MESSAGE_FIELDS = [
-        'fields' => 'from,to,message,attachments,created_time',
+        'fields' => 'from,to,message,attachments,sticker,created_time',
         'limit' => 12,
     ];
     private const MESSAGE_TAG = 'ACCOUNT_UPDATE';
