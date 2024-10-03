@@ -80,7 +80,9 @@ class FacebookController extends AbstractController
                     'customer' => current($customer),
                     'pageId' => $pageId,
                     'customerInitials' => substr($customer[0]['name'], 0, 1),
-                    'lastMessage' => $conversation['messages']['data'][0]['message'] ?? 'Attachment',
+                    'lastMessage' => (
+                        $conversation['messages']['data'][0]['message'] != '' ? $conversation['messages']['data'][0]['message'] : 'Attachment'
+                    ),
                     'attachments' => isset($conversaton['messages']['data'][0]['attachments']) ? $conversation['messages']['data'][0]['attachments'] : [],
                     'lastMessageTime' => $conversation['messages']['data'][0]['created_time'],
                     'lastMessageTimestamp' => new DateTime($conversation['messages']['data'][0]['created_time'])
