@@ -52,9 +52,9 @@ readonly class RegistrationDTO
                     new Assert\NotBlank(
                         message: 'Password must not be blanked.'
                     ),
-                    new Assert\PasswordStrength([
-                        'minScore' => Assert\PasswordStrength::STRENGTH_WEAK
-                    ]),
+                    new Assert\PasswordStrength(
+                        minScore: Assert\PasswordStrength::STRENGTH_WEAK
+                    ),
                     new Assert\Type(
                         type: 'string'
                     )

@@ -5,3 +5,9 @@ kreait_firebase:
         wano:
             credentials: '%kernel.project_dir%/config/firebase.json'
             database_uri: 'https://wano-4cbc9-default-rtdb.asia-southeast1.firebasedatabase.app'
+
+when@test:
+    kreait_firebase:
+        projects:
+            wano:
+                credentials: '%kernel.project_dir%/tests/Fixtures/firebase-fake.json'
